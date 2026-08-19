@@ -1,21 +1,12 @@
-import "./globals.css";
-import Navigation from "../components/Navigation";
+import './globals.css';
+import SiteShell from '../components/SiteShell';
 
 export const metadata = {
-  title: "HisabDo",
-  description: "HisabDo - Your simple accounting/expense tracking companion",
+  metadataBase: new URL('https://hisabdo.app'),
+  title: 'HisabDo | Smart Khata & Ledger App',
+  description: 'Offline-first khata and ledger management for small businesses.',
 };
 
 export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body>
-        <Navigation />
-        <main>{children}</main>
-        <footer>
-          <p>&copy; {new Date().getFullYear()} HisabDo. All rights reserved.</p>
-        </footer>
-      </body>
-    </html>
-  );
+  return <html lang="en"><body><SiteShell>{children}</SiteShell></body></html>;
 }
