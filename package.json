@@ -1,4 +1,24 @@
 {
+<<<<<<< HEAD
+  "name": "hisabdo-website-mern",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
+    "firebase-admin": "^14.2.0",
+    "next": "^16.3.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  }
+}
+=======
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
@@ -38,3 +58,4 @@
     "supertest": "^7.2.2"
   }
 }
+>>>>>>> e40f0837ca13dddb307af0d7e65a0f108f3815c0
