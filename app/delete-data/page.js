@@ -9,7 +9,7 @@ export default function DeleteDataPage() {
   return (
     <main className="delete-data-shell">
       <section className="hero-section">
-        <div className="badge">🗑️ Account & Data Deletion</div>
+        <div className="badge">🗑️ Account &amp; Data Deletion</div>
         <h1>HisabDo – Data Deletion</h1>
         <p>
           This page provides the instructions required for Google Play Console. Deletion is performed directly inside the HisabDo mobile app.
@@ -49,7 +49,9 @@ export default function DeleteDataPage() {
         </div>
       </section>
 
-      <style jsx global>{`
+      {/* Fixed: Replaced styled-jsx with dangerouslySetInnerHTML to keep Server Component & Metadata working */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
         :root { color-scheme: dark; --bg: #060d1a; --bg2: #0b1220; --surface: rgba(15,23,42,.78); --border: rgba(30,41,59,.9); --text: #f1f5f9; --muted: #94a3b8; --green: #22c55e; --green-dim: rgba(34,197,94,.12); }
         * { box-sizing: border-box; }
         body { margin: 0; font-family: Inter, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -67,7 +69,8 @@ export default function DeleteDataPage() {
         .card ul { padding-left: 20px; margin: 12px 0 0; }
         .card li { margin-bottom: 8px; }
         @media (max-width: 768px) { .hero-section { padding: 80px 20px 60px; } .content-section { padding: 0 20px 60px; } .card { padding: 18px 16px; } }
-      `}</style>
+        `
+      }} />
     </main>
   );
 }
