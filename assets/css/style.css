@@ -1282,6 +1282,8 @@ p, li, td, th, a, .card, .section-sub { overflow-wrap: anywhere; }
   .badge { max-width: 100%; justify-content: center; text-align: center; }
   .hero-buttons .btn, .hero-buttons .btn-outline { max-width: none; }
   .social { gap: 10px; }
+  .stat-grid { grid-template-columns: 1fr; width: 100%; max-width: 100%; gap: 12px; }
+  .stat-card { min-width: 0; width: 100%; box-sizing: border-box; overflow-wrap: anywhere; }
 }
 
 
