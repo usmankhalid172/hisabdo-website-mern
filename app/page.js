@@ -1,9 +1,9 @@
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   return (
-    <>
+    <main id="main-content">
       {/* HERO */}
       <section className="hero">
         <Image src="/assets/images/app-logo.webp" className="hero-logo" alt="HisabDo Logo" width={768} height={768} priority />
@@ -16,9 +16,6 @@ export default function Home() {
           </a>
           <Link className="btn-outline" href="/about-app">Learn More</Link>
         </div>
-        <p style={{ marginTop: '12px', fontSize: '13.5px', color: 'var(--green)', fontWeight: '600' }}>
-          📱 Available on Android
-        </p>
         <p className="hero-note">🔒 Offline First &nbsp;•&nbsp; 📄 PDF Reports &nbsp;•&nbsp; ☁ Backup &amp; Restore</p>
       </section>
 
@@ -209,6 +206,18 @@ export default function Home() {
         </div>
       </section>
 
+      {/* BENEFITS */}
+      <section className="section">
+        <h2 className="fade-up">Benefits at a Glance</h2>
+        <div className="section-divider fade-up"></div>
+        <div className="grid fade-up">
+          <div className="card"><h3>Simple Daily Use</h3><p>Designed for busy users who want a fast and practical tool for everyday money management.</p></div>
+          <div className="card"><h3>Reliable Accounting</h3><p>Create accurate records for receivables, payables and expenses without a complicated setup.</p></div>
+          <div className="card"><h3>Privacy-Focused</h3><p>Core records remain local by design, while optional backup or sync features depend on how you choose to use the app.</p></div>
+          <div className="card"><h3>Portable Reports</h3><p>Provide clear PDF reports to customers, suppliers and partners without manual formatting.</p></div>
+        </div>
+      </section>
+
       {/* LATEST BLOG POSTS */}
       <section className="section">
         <h2 className="fade-up">Latest Blog Posts</h2>
@@ -220,12 +229,23 @@ export default function Home() {
         </div>
       </section>
 
+      {/* APP ROADMAP */}
+      <section className="section">
+        <h2 className="fade-up">App Roadmap</h2>
+        <div className="section-divider fade-up"></div>
+        <div className="grid fade-up">
+          <div className="card"><h3>Current Focus</h3><p>Expanding offline reliability, backup quality and reporting for everyday business use.</p></div>
+          <div className="card"><h3>Next Release</h3><p>Improving visual summaries, invoicing workflows and bilingual reporting support.</p></div>
+          <div className="card"><h3>Long-Term Vision</h3><p>Building a more connected and user-friendly finance ecosystem for entrepreneurs across the region.</p></div>
+        </div>
+      </section>
+
       {/* BUSINESS CATEGORIES */}
       <section className="section">
         <h2 className="fade-up">Built for Many Business Types</h2>
         <div className="section-divider fade-up"></div>
         <div className="tag-grid fade-up">
-          <span className="tag">Retail Stores</span>
+          <span className="tag">RetailStores</span>
           <span className="tag">Grocery Shops</span>
           <span className="tag">Wholesale Businesses</span>
           <span className="tag">Service Providers</span>
@@ -244,6 +264,13 @@ export default function Home() {
           <span className="tag"><i className="fas fa-file-pdf"></i> PDF Export</span>
           <span className="tag"><i className="fas fa-globe"></i> Multi-Region Support</span>
         </div>
+      </section>
+
+      {/* SEO CONTENT */}
+      <section className="section">
+        <h2 className="fade-up">Khata, Ledger & Finance Management Made Practical</h2>
+        <div className="section-divider fade-up"></div>
+        <p className="section-sub fade-up">Whether you run a small business in Pakistan, manage customer balances in India, or simply want better personal budgeting, HisabDo offers an easy way to track khata, ledger entries, expense activity, receivables and payables in one place.</p>
       </section>
 
       {/* CTA */}
@@ -270,6 +297,6 @@ export default function Home() {
           <a href="https://www.youtube.com/channel/UCtYSl8MRwz-MK6ukBKZS9Rg" title="YouTube" target="_blank" rel="noopener noreferrer"><i className="fab fa-youtube"></i></a>
         </div>
       </section>
-    </>
+    </main>
   );
 }
