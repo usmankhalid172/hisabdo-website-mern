@@ -16,7 +16,7 @@ export default function Home() {
           </a>
           <Link className="btn-outline" href="/about-app">Learn More</Link>
         </div>
-        <p className="hero-note">🔒 Offline First &nbsp;•&nbsp; 📄 PDF Reports &nbsp;•&nbsp; ☁ Backup &amp; Restore</p>
+        <p className="hero-note">🔒 Offline First &bull; 📄 PDF Reports &bull; ☁ Backup &amp; Restore</p>
       </section>
 
       {/* STARTUPBASE BADGES */}
@@ -115,7 +115,7 @@ export default function Home() {
           <div className="split-text">
             <div className="badge">👤 Founder &amp; CEO</div>
             <h2>Mian Usman Khalid</h2>
-            <p className="founder-title">Software Engineer &nbsp;•&nbsp; Entrepreneur &nbsp;•&nbsp; Youth Leader</p>
+            <p className="founder-title">Software Engineer &bull; Entrepreneur &bull; Youth Leader</p>
             <p>Founder &amp; CEO of HisabDo, focused on building practical technology solutions for businesses and individuals across Pakistan and beyond.</p>
             <br />
             <Link className="btn" href="/mian-usman-khalid">View Full Profile</Link>
@@ -245,7 +245,7 @@ export default function Home() {
         <h2 className="fade-up">Built for Many Business Types</h2>
         <div className="section-divider fade-up"></div>
         <div className="tag-grid fade-up">
-          <span className="tag">RetailStores</span>
+          <span className="tag">Retail Stores</span>
           <span className="tag">Grocery Shops</span>
           <span className="tag">Wholesale Businesses</span>
           <span className="tag">Service Providers</span>
