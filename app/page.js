@@ -8,8 +8,8 @@ export default function Home() {
       <section className="hero">
         <Image src="/assets/images/app-logo.webp" className="hero-logo" alt="HisabDo Logo" width={768} height={768} priority />
         <div className="badge">📱 Smart Offline Financial Management</div>
-        <h1>HisabDo: Khata &amp; Ledger</h1>
-        <p>Manage Khata, Udhar, Expenses, Receivables &amp; Customers with a powerful offline-first digital ledger — built for shopkeepers, freelancers &amp; small businesses.</p>
+        <h1>HisabDo by XICTEK Systems</h1>
+        <p>Manage Khata, Udhar, Expenses, Receivables &amp; Customers with a powerful offline-first digital ledger — built for shopkeepers, freelancers &amp; small businesses by XICTEK Systems.</p>
         <div className="hero-buttons">
           <a className="btn" href="https://play.google.com/store/apps/details?id=com.usman.hisabdo" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-google-play"></i> Download Free

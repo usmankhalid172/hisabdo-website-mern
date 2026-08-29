@@ -7,7 +7,7 @@ export default function FounderPage() {
             {/* HERO */}
             <section className="hero" style={{ paddingBottom: '48px' }}>
                 <img src="/assets/images/founder.webp" className="founder-hero-img" alt="Mian Usman Khalid" loading="lazy" decoding="async" width="768" height="768" />
-                <div className="badge">👤 Founder &amp; CEO — HisabDo</div>
+                <div className="badge">👤 Founder &amp; CEO — XICTEK Systems</div>
                 <h1>Mian Usman Khalid</h1>
                 <p style={{ color: 'var(--muted)', fontSize: '15px' }}>Software Engineer &nbsp;•&nbsp; Entrepreneur &nbsp;•&nbsp; Youth Political &amp; Social Leader</p>
                 <div className="hero-buttons" style={{ marginTop: '28px' }}>
@@ -26,7 +26,7 @@ export default function FounderPage() {
                         {/* 1. Biography */}
                         <div className="wiki-section" id="biography">
                             <h2>1. Biography</h2>
-                            <p>Mian Usman Khalid is a Pakistani Software Engineer, Entrepreneur, and Youth Political &amp; Social Leader. He is the Founder and CEO of <strong style={{ color: '#e2e8f0' }}>HisabDo</strong>, a digital ledger and business finance management application built for individuals and businesses in Pakistan and beyond.</p>
+                            <p>Mian Usman Khalid is a Pakistani Software Engineer, Entrepreneur, and Youth Political &amp; Social Leader. He is the Founder and CEO of <strong style={{ color: '#e2e8f0' }}>XICTEK Systems</strong>, and HisabDo is the flagship product of the company — a digital ledger and business finance management application built for individuals and businesses in Pakistan and beyond.</p>
                             <p>Born and raised in Pakistan, Usman grew up in an entrepreneurial family with a strong tradition of business, real estate, and community leadership. His father, Mian Khalid Aziz, is a seasoned businessman and Co-Founder of HisabDo. His grandfather, Late Chaudhary Abdul Aziz, was a respected community leader and Sarpanch whose values of integrity and service continue to inspire the family.</p>
                             <p>Usman completed his degree in Computer Science from COMSATS University Islamabad, where he developed expertise in software engineering, enterprise application development, and modern cloud technologies.</p>
                         </div>
