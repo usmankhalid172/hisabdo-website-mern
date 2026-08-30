@@ -3,6 +3,9 @@ import SiteShell from '../components/SiteShell';
 
 export const metadata = {
   metadataBase: new URL('https://hisabdo.app'),
+  verification: {
+    google: 'cRwOB42ERAVp7tkYLPEa23vv9BZd7jTFyMi89e9DpGc',
+  },
   title: {
     default: 'HisabDo | Smart Khata & Ledger App',
     template: '%s | HisabDo by XICTEK Systems',
