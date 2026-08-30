@@ -29,6 +29,7 @@ export default function SiteShell({ children }) {
           <nav>
             <Link href="/" onClick={close}>Home</Link>
             <Link href="/about" onClick={close}>About</Link>
+            <Link href="/xicteksystems" onClick={close}>Company</Link>
             <Link href="/app" onClick={close}>App</Link>
             <Link href="/founder" onClick={close}>Founder</Link>
             <Link href="/leadership" onClick={close}>Leadership</Link>
@@ -74,6 +75,7 @@ export default function SiteShell({ children }) {
           <div className="footer-col">
             <h4>Explore</h4>
             <Link href="/">Home</Link>
+            <Link href="/xicteksystems">Company</Link>
             <Link href="/app">App</Link>
             <Link href="/founder">Founder</Link>
             <Link href="/leadership">Leadership</Link>

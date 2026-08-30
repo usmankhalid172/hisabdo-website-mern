@@ -282,6 +282,7 @@ export default function Home() {
           <a className="btn" href="https://play.google.com/store/apps/details?id=com.usman.hisabdo" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-google-play"></i> Download Now — Free
           </a>
+          <Link className="btn-outline" href="/xicteksystems">Meet XICTEK Systems</Link>
         </div>
       </section>
 
