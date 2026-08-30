@@ -1,31 +1,45 @@
 "use client";
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function SiteShell({ children }) {
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+
   return (
     <>
-      {/* ORIGINAL NAVBAR */}
       <header className="nav">
-        <Link href="/" className="logo" style={{ textDecoration: 'none', color: 'var(--text)' }}>
+        <Link href="/" className="logo" style={{ textDecoration: 'none', color: 'var(--text)' }} onClick={close}>
           <img src="/assets/images/app-logo.webp" alt="HisabDo Logo" />
           <span>HisabDo</span>
         </Link>
 
-        <div className="nav-menu">
+        <button
+          className={`hamburger${open ? ' open' : ''}`}
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+          aria-expanded={open}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div className={`nav-menu${open ? ' open' : ''}`}>
           <nav>
-            <Link href="/">Home</Link>
-            <Link href="/about">About</Link>
-            <Link href="/app">App</Link>
-            <Link href="/founder">Founder</Link>
-            <Link href="/leadership">Leadership</Link>
-            <Link href="/blog">Blog</Link>
-            <Link href="/faq">FAQ</Link>
-            <Link href="/careers">Careers</Link>
-            <Link href="/media">Media</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/privacy-policy">Privacy Policy</Link>
+            <Link href="/" onClick={close}>Home</Link>
+            <Link href="/about" onClick={close}>About</Link>
+            <Link href="/app" onClick={close}>App</Link>
+            <Link href="/founder" onClick={close}>Founder</Link>
+            <Link href="/leadership" onClick={close}>Leadership</Link>
+            <Link href="/blog" onClick={close}>Blog</Link>
+            <Link href="/faq" onClick={close}>FAQ</Link>
+            <Link href="/careers" onClick={close}>Careers</Link>
+            <Link href="/media" onClick={close}>Media</Link>
+            <Link href="/contact" onClick={close}>Contact</Link>
+            <Link href="/privacy-policy" onClick={close}>Privacy Policy</Link>
           </nav>
-          <a href="https://play.google.com/store/apps/details?id=com.usman.hisabdo" target="_blank" rel="noopener noreferrer" className="btn btn-sm">Get App</a>
+          <a href="https://play.google.com/store/apps/details?id=com.usman.hisabdo" target="_blank" rel="noopener noreferrer" className="btn btn-sm" onClick={close}>Get App</a>
         </div>
       </header>
 

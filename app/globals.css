@@ -131,6 +131,36 @@ a {
     color: var(--green);
 }
 
+/* Hamburger */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 6px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+}
+
+.hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: .3s;
+}
+
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; width: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
 /* ═══════════════════════════════════════
    BUTTONS
    ═══════════════════════════════════════ */
@@ -599,26 +629,48 @@ footer {
 
     .nav {
         padding: 0 20px;
-        position: sticky;
         flex-wrap: wrap;
         height: auto;
     }
 
-    .nav>.logo {
+    .nav > .logo {
         margin: 14px 0;
     }
 
+    .hamburger {
+        display: flex;
+    }
+
     .nav-menu {
+        display: none;
         flex-direction: column;
+        align-items: stretch;
         width: 100%;
         padding: 8px 0 14px;
-        gap: 10px;
+        border-top: 1px solid var(--border);
+        gap: 0;
+    }
+
+    .nav-menu.open {
+        display: flex;
     }
 
     .nav-menu nav {
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         margin-right: 0;
+        gap: 2px;
+    }
+
+    .nav-menu nav a {
+        padding: 11px 8px;
+        font-size: 15px;
+    }
+
+    .nav-menu .btn {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
     }
 
     .hero {
