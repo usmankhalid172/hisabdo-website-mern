@@ -1,18 +1,18 @@
-// ── Vercel Speed Insights ──
-(function(){
-  var s = document.createElement('script');
-  s.src = '/_vercel/speed-insights/script.js';
-  s.defer = true;
-  document.head.appendChild(s);
-})();
-
-// ── Vercel Analytics ──
-(function(){
-  var s = document.createElement('script');
-  s.src = '/_vercel/insights/script.js';
-  s.defer = true;
-  document.head.appendChild(s);
-})();
+/* Vercel Analytics scripts only load when actually deployed on Vercel; locally they 404. */
+if (location.hostname && !['localhost', '127.0.0.1'].includes(location.hostname)) {
+  (function(){
+    var s = document.createElement('script');
+    s.src = '/_vercel/speed-insights/script.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  })();
+  (function(){
+    var s = document.createElement('script');
+    s.src = '/_vercel/insights/script.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  })();
+}
 
 const PAGE_META = {
   'index.html': {

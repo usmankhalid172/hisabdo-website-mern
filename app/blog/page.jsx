@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Blog - HisabDo | Mian Usman Khalid',
-  description: 'Articles, guides and insights on digital accounting, entrepreneurship and software engineering by Mian Usman Khalid, Founder & CEO of XICTEK Systems and creator of HisabDo.',
+  description: 'Articles, guides and insights on digital accounting, entrepreneurship and software engineering by Mian Usman Khalid, Founder & CEO of HisabDo.',
 };
 
 export default function Blog() {
