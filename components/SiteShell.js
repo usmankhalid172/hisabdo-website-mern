@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { href: '/careers', label: 'Careers' },
   { href: '/media', label: 'Media' },
   { href: '/contact', label: 'Contact' },
+  {href:'/privacy-policy', label: 'Privacy Policy' },
 ];
 
 export default function SiteShell({ children }) {
