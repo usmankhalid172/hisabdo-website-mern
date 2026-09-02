@@ -1438,16 +1438,3 @@ body.menu-open { overflow: hidden; }
 .legacy-article a:hover { color: var(--green); }
 .legacy-article img { border-radius: 12px; margin: 12px 0; }
 .legacy-article .badge, .legacy-article .hero-note, .legacy-article .blog-meta { text-decoration: none; }
-/* Privacy Policy spacing fix */
-
-.policy-page {
-  padding: 48px 48px 56px;
-}
-
-.policy-page .policy-h2 {
-  margin-top: 24px;
-}
-
-.policy-page .policy-section {
-  margin-top: 12px;
-}
