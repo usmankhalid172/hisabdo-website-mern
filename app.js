@@ -34,6 +34,9 @@ app.use("/api/ai", require("./routes/aiRoutes"));
 app.use("/api/expenses", require("./routes/expenseRoutes"));
 app.use("/api/customers", require("./routes/customerRoutes"));
 
+// --- NAYA AI ROUTES ADD KIYA GAYA HAI ---
+app.use("/api/ai", require("./routes/aiRoutes"));
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "HisabDo API is running" });
