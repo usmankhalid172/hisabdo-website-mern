@@ -1,52 +1,71 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./ai.module.css";
-
-const recommendations = [
-  {
-    icon: "💡",
-    title: "Review inventory spending",
-    text: "Your inventory expenses are higher than your recent average.",
-    action: "View insight",
-  },
-  {
-    icon: "📊",
-    title: "Check monthly performance",
-    text: "Your business performance has improved compared with last month.",
-    action: "View report",
-  },
-  {
-    icon: "👥",
-    title: "Follow up with customers",
-    text: "3 customers may need a follow-up based on recent activity.",
-    action: "View customers",
-  },
-];
-
-const alerts = [
-  {
-    type: "high",
-    icon: "⚠️",
-    title: "High expense detected",
-    text: "Inventory spending is above your normal range.",
-  },
-  {
-    type: "medium",
-    icon: "🔔",
-    title: "Payment approaching",
-    text: "A recurring payment may be due soon.",
-  },
-  {
-    type: "low",
-    icon: "✨",
-    title: "Monthly review available",
-    text: "Your latest monthly business insights are ready.",
-  },
-];
 
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState("overview");
+
+  // --- ALL API STATES ---
+  const [healthData, setHealthData] = useState(null);
+  const [healthLoading, setHealthLoading] = useState(true);
+
+  const [insightsData, setInsightsData] = useState(null);
+  const [insightsLoading, setInsightsLoading] = useState(true);
+
+  const [alertsData, setAlertsData] = useState([]);
+  const [alertsLoading, setAlertsLoading] = useState(true);
+
+  const [recsData, setRecsData] = useState([]);
+  const [recsLoading, setRecsLoading] = useState(true);
+
+  const [goalData, setGoalData] = useState(null);
+  const [goalLoading, setGoalLoading] = useState(true);
+
+  const [customerData, setCustomerData] = useState(null);
+  const [customerLoading, setCustomerLoading] = useState(true);
+
+  // --- FETCH ALL AI DATA ---
+  useEffect(() => {
+    const fetchAllAI = async () => {
+      try {
+        // 1. Health
+        const hRes = await fetch("http://localhost:4000/api/ai/business-health");
+        setHealthData(await hRes.json());
+        setHealthLoading(false);
+
+        // 2. Insights
+        const iRes = await fetch("http://localhost:4000/api/ai/monthly-insights");
+        setInsightsData(await iRes.json());
+        setInsightsLoading(false);
+
+        // 3. Alerts
+        const aRes = await fetch("http://localhost:4000/api/ai/alerts");
+        setAlertsData(await aRes.json());
+        setAlertsLoading(false);
+
+        // 4. Recommendations
+        const rRes = await fetch("http://localhost:4000/api/ai/recommendations");
+        setRecsData(await rRes.json());
+        setRecsLoading(false);
+
+        // 5. Goals
+        const gRes = await fetch("http://localhost:4000/api/ai/goals");
+        setGoalData(await gRes.json());
+        setGoalLoading(false);
+
+        // 6. Customers
+        const cRes = await fetch("http://localhost:4000/api/ai/customers");
+        setCustomerData(await cRes.json());
+        setCustomerLoading(false);
+
+      } catch (error) {
+        console.error("AI API Fetch Error:", error);
+      }
+    };
+
+    fetchAllAI();
+  }, []);
 
   return (
     <main className={styles.page}>
@@ -60,18 +79,13 @@ export default function AIPage() {
               <span className={styles.aiDot} />
               HISABDO AI
             </div>
-
             <h1>Business intelligence, made simple.</h1>
-
             <p>
               Get smarter insights from your business activity and make
               better financial decisions with HisabDo AI.
             </p>
           </div>
-
-          <button className={styles.refreshButton}>
-            ↻ Refresh insights
-          </button>
+          <button className={styles.refreshButton}>↻ Refresh insights</button>
         </header>
 
         {/* TABS */}
@@ -95,44 +109,39 @@ export default function AIPage() {
         {/* AI SUMMARY */}
         <section className={styles.summaryCard}>
           <div className={styles.summaryIcon}>✦</div>
-
           <div className={styles.summaryContent}>
             <span className={styles.eyebrow}>AI BUSINESS SUMMARY</span>
-
             <h2>Your business is performing well this month.</h2>
-
             <p>
               Revenue and customer activity are looking healthy. However,
               inventory spending has increased and may need your attention.
             </p>
-
             <div className={styles.summaryActions}>
-              <button className={styles.primaryButton}>
-                View recommendations
-              </button>
-
-              <button className={styles.secondaryButton}>
-                See monthly insights
-              </button>
+              <button className={styles.primaryButton}>View recommendations</button>
+              <button className={styles.secondaryButton}>See monthly insights</button>
             </div>
           </div>
         </section>
 
         {/* STATS */}
         <section className={styles.statsGrid}>
+          {/* Business Health */}
           <article className={styles.statCard}>
             <div className={styles.statTop}>
               <span>Business Health</span>
               <span className={styles.greenIcon}>♥</span>
             </div>
-
-            <strong>82<span>/100</span></strong>
-
-            <div className={styles.progress}>
-              <div style={{ width: "82%" }} />
-            </div>
-
-            <small>Excellent performance</small>
+            {healthLoading ? (
+              <p style={{ color: '#888' }}>Loading...</p>
+            ) : (
+              <>
+                <strong>{healthData?.score || 0}<span>/100</span></strong>
+                <div className={styles.progress}>
+                  <div style={{ width: `${healthData?.score || 0}%` }} />
+                </div>
+                <small>{healthData?.message || "Data unavailable"}</small>
+              </>
+            )}
           </article>
 
           <article className={styles.statCard}>
@@ -140,13 +149,8 @@ export default function AIPage() {
               <span>Monthly Profit</span>
               <span className={styles.greenIcon}>↗</span>
             </div>
-
             <strong>Rs. 60,000</strong>
-
-            <div className={styles.changePositive}>
-              ↑ 8.4% from last month
-            </div>
-
+            <div className={styles.changePositive}>↑ 8.4% from last month</div>
             <small>Based on your latest records</small>
           </article>
 
@@ -155,13 +159,10 @@ export default function AIPage() {
               <span>Customer Activity</span>
               <span className={styles.blueIcon}>●</span>
             </div>
-
             <strong>84%</strong>
-
             <div className={styles.progress}>
               <div style={{ width: "84%" }} />
             </div>
-
             <small>Healthy customer activity</small>
           </article>
 
@@ -170,13 +171,8 @@ export default function AIPage() {
               <span>Pending Payments</span>
               <span className={styles.orangeIcon}>!</span>
             </div>
-
             <strong>Rs. 15,000</strong>
-
-            <div className={styles.changeWarning}>
-              4 payments need attention
-            </div>
-
+            <div className={styles.changeWarning}>4 payments need attention</div>
             <small>Review outstanding balances</small>
           </article>
         </section>
@@ -190,23 +186,23 @@ export default function AIPage() {
                 <span className={styles.eyebrow}>PERSONALIZED</span>
                 <h3>AI Recommendations</h3>
               </div>
-
               <span className={styles.sparkle}>✦</span>
             </div>
-
             <div className={styles.recommendationList}>
-              {recommendations.map((item) => (
-                <div className={styles.recommendation} key={item.title}>
-                  <div className={styles.itemIcon}>{item.icon}</div>
-
-                  <div className={styles.itemContent}>
-                    <h4>{item.title}</h4>
-                    <p>{item.text}</p>
-
-                    <button>{item.action} →</button>
+              {recsLoading ? (
+                <p style={{ color: '#888', padding: '10px' }}>Loading recommendations...</p>
+              ) : (
+                (Array.isArray(recsData) ? recsData : []).map((item) => (
+                  <div className={styles.recommendation} key={item.title}>
+                    <div className={styles.itemIcon}>{item.icon}</div>
+                    <div className={styles.itemContent}>
+                      <h4>{item.title}</h4>
+                      <p>{item.text}</p>
+                      <button>{item.action} →</button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </article>
 
@@ -217,29 +213,24 @@ export default function AIPage() {
                 <span className={styles.eyebrow}>ATTENTION</span>
                 <h3>Smart Alerts</h3>
               </div>
-
-              <span className={styles.alertCount}>3</span>
+              <span className={styles.alertCount}>{alertsData.length}</span>
             </div>
-
             <div className={styles.alertList}>
-              {alerts.map((alert) => (
-                <div
-                  className={`${styles.alert} ${styles[alert.type]}`}
-                  key={alert.title}
-                >
-                  <div className={styles.alertIcon}>{alert.icon}</div>
-
-                  <div>
-                    <h4>{alert.title}</h4>
-                    <p>{alert.text}</p>
+              {alertsLoading ? (
+                <p style={{ color: '#888', padding: '10px' }}>Loading alerts...</p>
+              ) : (
+                (Array.isArray(alertsData) ? alertsData : []).map((alert) => (
+                  <div className={`${styles.alert} ${styles[alert.type]}`} key={alert.title}>
+                    <div className={styles.alertIcon}>{alert.icon}</div>
+                    <div>
+                      <h4>{alert.title}</h4>
+                      <p>{alert.text}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
-
-            <button className={styles.fullButton}>
-              View all alerts →
-            </button>
+            <button className={styles.fullButton}>View all alerts →</button>
           </article>
         </section>
 
@@ -252,31 +243,29 @@ export default function AIPage() {
                 <span className={styles.eyebrow}>FINANCIAL PLANNING</span>
                 <h3>Your Financial Goal</h3>
               </div>
-
               <span className={styles.goalIcon}>🎯</span>
             </div>
-
-            <div className={styles.goalHeader}>
-              <div>
-                <h4>New Shop</h4>
-                <p>Rs. 200,000 saved of Rs. 500,000</p>
-              </div>
-
-              <strong>40%</strong>
-            </div>
-
-            <div className={styles.goalProgress}>
-              <div style={{ width: "40%" }} />
-            </div>
-
-            <div className={styles.goalFooter}>
-              <span>Rs. 300,000 remaining</span>
-              <span>On track</span>
-            </div>
-
-            <button className={styles.fullButton}>
-              View action plan →
-            </button>
+            {goalLoading ? (
+              <p style={{ color: '#888', padding: '10px' }}>Loading goal...</p>
+            ) : (
+              <>
+                <div className={styles.goalHeader}>
+                  <div>
+                    <h4>{goalData?.title || "Goal"}</h4>
+                    <p>Rs. {goalData?.saved} saved of Rs. {goalData?.target}</p>
+                  </div>
+                  <strong>{goalData?.percentage}%</strong>
+                </div>
+                <div className={styles.goalProgress}>
+                  <div style={{ width: `${goalData?.percentage || 0}%` }} />
+                </div>
+                <div className={styles.goalFooter}>
+                  <span>Rs. {goalData?.remaining} remaining</span>
+                  <span>{goalData?.status}</span>
+                </div>
+              </>
+            )}
+            <button className={styles.fullButton}>View action plan →</button>
           </article>
 
           {/* CUSTOMER INSIGHTS */}
@@ -286,86 +275,72 @@ export default function AIPage() {
                 <span className={styles.eyebrow}>CUSTOMER INTELLIGENCE</span>
                 <h3>Customer Insights</h3>
               </div>
-
               <span className={styles.customerIcon}>👥</span>
             </div>
-
-            <div className={styles.customerSummary}>
-              <div>
-                <strong>3</strong>
-                <span>Need follow-up</span>
-              </div>
-
-              <div>
-                <strong>12</strong>
-                <span>Active customers</span>
-              </div>
-
-              <div>
-                <strong>84%</strong>
-                <span>Activity score</span>
-              </div>
-            </div>
-
-            <div className={styles.customerRow}>
-              <div className={styles.avatar}>AT</div>
-
-              <div>
-                <h4>Ahmed Traders</h4>
-                <p>Last purchase 28 days ago</p>
-              </div>
-
-              <span className={styles.mediumBadge}>Medium</span>
-            </div>
-
-            <div className={styles.customerRow}>
-              <div className={styles.avatar}>MS</div>
-
-              <div>
-                <h4>Malik Store</h4>
-                <p>Follow-up recommended</p>
-              </div>
-
-              <span className={styles.highBadge}>High</span>
-            </div>
-
-            <button className={styles.fullButton}>
-              View customer insights →
-            </button>
+            {customerLoading ? (
+              <p style={{ color: '#888', padding: '10px' }}>Loading customers...</p>
+            ) : (
+              <>
+                <div className={styles.customerSummary}>
+                  <div>
+                    <strong>{customerData?.followUpCount}</strong>
+                    <span>Need follow-up</span>
+                  </div>
+                  <div>
+                    <strong>{customerData?.activeCount}</strong>
+                    <span>Active customers</span>
+                  </div>
+                  <div>
+                    <strong>{customerData?.activityScore}</strong>
+                    <span>Activity score</span>
+                  </div>
+                </div>
+                {customerData?.list?.map((cust) => (
+                  <div className={styles.customerRow} key={cust.id}>
+                    <div className={styles.avatar}>{cust.initials}</div>
+                    <div>
+                      <h4>{cust.name}</h4>
+                      <p>{cust.desc}</p>
+                    </div>
+                    <span className={cust.badge === "High" ? styles.highBadge : styles.mediumBadge}>
+                      {cust.badge}
+                    </span>
+                  </div>
+                ))}
+              </>
+            )}
+            <button className={styles.fullButton}>View customer insights →</button>
           </article>
         </section>
 
         {/* MONTHLY INSIGHTS */}
         <section className={styles.monthlyCard}>
-          <div>
-            <span className={styles.eyebrow}>MONTHLY INSIGHTS</span>
-            <h3>August 2026 Business Overview</h3>
-            <p>
-              Your latest financial activity shows a positive trend with
-              opportunities to improve expense control.
-            </p>
-          </div>
-
-          <div className={styles.monthlyStats}>
-            <div>
-              <span>Income</span>
-              <strong>Rs. 150K</strong>
-            </div>
-
-            <div>
-              <span>Expenses</span>
-              <strong>Rs. 90K</strong>
-            </div>
-
-            <div>
-              <span>Profit</span>
-              <strong>Rs. 60K</strong>
-            </div>
-          </div>
-
-          <button className={styles.primaryButton}>
-            View full report →
-          </button>
+          {insightsLoading ? (
+            <p style={{ padding: "20px", color: "#888" }}>Fetching AI Monthly Insights...</p>
+          ) : (
+            <>
+              <div>
+                <span className={styles.eyebrow}>MONTHLY INSIGHTS</span>
+                <h3>{insightsData?.month || "Current Month"} Business Overview</h3>
+                <p>{insightsData?.summary}</p>
+              </div>
+              <div className={styles.monthlyStats}>
+                <div>
+                  <span>Income</span>
+                  <strong>Rs. {insightsData?.income}</strong>
+                </div>
+                <div>
+                  <span>Expenses</span>
+                  <strong>Rs. {insightsData?.expenses}</strong>
+                </div>
+                <div>
+                  <span>Profit</span>
+                  <strong>Rs. {insightsData?.profit}</strong>
+                </div>
+              </div>
+              <button className={styles.primaryButton}>View full report →</button>
+            </>
+          )}
         </section>
 
         {/* FOOTER NOTE */}
