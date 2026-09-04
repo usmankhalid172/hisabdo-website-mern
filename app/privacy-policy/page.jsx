@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
         <p style={{ maxWidth: '720px' }}>HisabDo (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) values your privacy. This Privacy Policy explains how the HisabDo mobile application (&ldquo;App&rdquo;) collects, uses, stores, and protects your information.</p>
       </section>
 
-      <section className="section">
+      <section className="section policy-page">
         <div className="policy-wrap fade-up">
 
           <div className="policy-section">

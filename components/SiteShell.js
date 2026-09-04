@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { href: '/careers', label: 'Careers' },
   { href: '/media', label: 'Media' },
   { href: '/contact', label: 'Contact' },
+  {href:'/privacy-policy', label: 'Privacy Policy' },
 ];
 
 export default function SiteShell({ children }) {
@@ -81,7 +82,7 @@ export default function SiteShell({ children }) {
         </div>
 
         <nav className={`nav-mobile ${open ? 'open' : ''}`} aria-label="Mobile">
-          {NAV_LINKS.concat([{ href: '/privacy-policy', label: 'Privacy Policy' }]).map((l) => (
+          {NAV_LINKS.map((l) => (
             <Link key={l.href} href={l.href} className={pathname === l.href ? 'active-nav' : ''}>
               {l.label}
             </Link>

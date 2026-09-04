@@ -30,6 +30,9 @@ app.use("/api/jobs", require("./routes/jobRoutes"));
 app.use("/api/applications", require("./routes/applicationRoutes"));
 app.use("/api/blogs", require("./routes/blogRoutes"));
 app.use("/api/smart-fill", require("./routes/smartFillRoutes"));
+app.use("/api/ai", require("./routes/aiRoutes"));
+app.use("/api/expenses", require("./routes/expenseRoutes"));
+app.use("/api/customers", require("./routes/customerRoutes"));
 
 // --- NAYA AI ROUTES ADD KIYA GAYA HAI ---
 app.use("/api/ai", require("./routes/aiRoutes"));

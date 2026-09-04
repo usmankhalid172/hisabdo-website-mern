@@ -5,6 +5,132 @@ import styles from "./ai.module.css";
 
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [source, setSource] = useState("");
+
+  // Data states
+  const [summary, setSummary] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [customerSummary, setCustomerSummary] = useState(null);
+  const [monthly, setMonthly] = useState(null);
+
+  // Chat states
+  const [chatQuery, setChatQuery] = useState("");
+  const [chatReply, setChatReply] = useState(null);
+  const [chatLoading, setChatLoading] = useState(false);
+
+  // ========== FETCH ALL DATA ==========
+  const fetchAllData = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // 1. Business Health / Overview
+      const overviewRes = await fetch("http://localhost:4000/api/ai/overview");
+      const overviewData = await overviewRes.json();
+
+      if (overviewData?.data) {
+        setSummary(overviewData.data.summaryCard || null);
+        setStats(overviewData.data.stats || null);
+        setRecommendations(overviewData.data.recommendations || []);
+        setSource(overviewData.source || "");
+      }
+
+      // 2. Monthly Insights
+      const monthlyRes = await fetch("http://localhost:4000/api/ai/monthly-insights");
+      const monthlyData = await monthlyRes.json();
+      if (monthlyData?.data) {
+        setMonthly(monthlyData.data);
+      }
+
+      // 3. Expense Alerts
+      const alertsRes = await fetch("http://localhost:4000/api/expenses/alerts");
+      const alertsData = await alertsRes.json();
+      if (alertsData?.alerts) {
+        setAlerts(alertsData.alerts);
+      }
+
+      // 4. Customers with Risk
+      const customersRes = await fetch("http://localhost:4000/api/customers");
+      const customersData = await customersRes.json();
+      if (customersData?.customers) {
+        setCustomers(customersData.customers);
+        setCustomerSummary(customersData.summary || null);
+      }
+    } catch (err) {
+      console.error("AI data fetch error:", err);
+      setError("Failed to load AI insights. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  // ========== AI CHAT ==========
+  const handleChatSubmit = async (e) => {
+    e.preventDefault();
+    if (!chatQuery.trim()) return;
+
+    setChatLoading(true);
+    setChatReply(null);
+
+    try {
+      const res = await fetch("http://localhost:4000/api/ai/assistant/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: chatQuery }),
+      });
+
+      const data = await res.json();
+      if (data?.data?.reply) {
+        setChatReply(data.data.reply);
+      } else {
+        setChatReply("Sorry, I could not find an answer. Please try again.");
+      }
+    } catch (err) {
+      setChatReply("Something went wrong. Please try again later.");
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  // ========== LOADING STATE ==========
+  if (loading) {
+    return (
+      <main className={styles.page}>
+        <div className={styles.container} style={{ textAlign: "center", paddingTop: "120px" }}>
+          <div className={styles.aiLabel}>
+            <span className={styles.aiDot} />
+            HISABDO AI
+          </div>
+          <h2 style={{ marginTop: "20px" }}>Loading AI Insights...</h2>
+          <p style={{ color: "#94a3b8" }}>Please wait while we fetch your business intelligence.</p>
+        </div>
+      </main>
+    );
+  }
+
+  // ========== ERROR STATE ==========
+  if (error) {
+    return (
+      <main className={styles.page}>
+        <div className={styles.container} style={{ textAlign: "center", paddingTop: "120px" }}>
+          <h2>Something went wrong</h2>
+          <p style={{ color: "#94a3b8", margin: "16px 0" }}>{error}</p>
+          <button className={styles.primaryButton} onClick={fetchAllData}>
+            Try Again
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   // --- ALL API STATES ---
   const [healthData, setHealthData] = useState(null);
@@ -78,6 +204,11 @@ export default function AIPage() {
             <div className={styles.aiLabel}>
               <span className={styles.aiDot} />
               HISABDO AI
+              {source && (
+                <span style={{ marginLeft: "12px", fontSize: "10px", color: "#64748b" }}>
+                  ({source === "remote_ai" ? "Live AI" : "Fallback"})
+                </span>
+              )}
             </div>
             <h1>Business intelligence, made simple.</h1>
             <p>
@@ -94,7 +225,7 @@ export default function AIPage() {
             ["overview", "Overview"],
             ["insights", "Insights"],
             ["customers", "Customers"],
-            ["goals", "Goals"],
+            ["chat", "AI Assistant"],
           ].map(([key, label]) => (
             <button
               key={key}
@@ -268,8 +399,88 @@ export default function AIPage() {
             <button className={styles.fullButton}>View action plan →</button>
           </article>
 
-          {/* CUSTOMER INSIGHTS */}
-          <article className={styles.card}>
+                {customerSummary && (
+                  <div className={styles.customerSummary}>
+                    <div>
+                      <strong>{customerSummary.needFollowUp ?? 0}</strong>
+                      <span>Need follow-up</span>
+                    </div>
+                    <div>
+                      <strong>{customerSummary.activeCustomers ?? 0}</strong>
+                      <span>Active customers</span>
+                    </div>
+                    <div>
+                      <strong>{customerSummary.activityScore ?? 0}%</strong>
+                      <span>Activity score</span>
+                    </div>
+                  </div>
+                )}
+
+                {customers.slice(0, 3).map((cust) => (
+                  <div className={styles.customerRow} key={cust.id}>
+                    <div className={styles.avatar}>{cust.initials || "CU"}</div>
+                    <div>
+                      <h4>{cust.name}</h4>
+                      <p>
+                        {cust.followUpRequired
+                          ? "Follow-up recommended"
+                          : `Last purchase ${cust.lastPurchaseDaysAgo || "—"} days ago`}
+                      </p>
+                    </div>
+                    <span
+                      className={
+                        cust.riskBadge === "High"
+                          ? styles.highBadge
+                          : styles.mediumBadge
+                      }
+                    >
+                      {cust.riskBadge || "Low"}
+                    </span>
+                  </div>
+                ))}
+
+                <button className={styles.fullButton}>
+                  View customer insights →
+                </button>
+              </article>
+
+              {/* MONTHLY INSIGHTS */}
+              {monthly && (
+                <article className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <div>
+                      <span className={styles.eyebrow}>
+                        {monthly.eyebrow || "MONTHLY INSIGHTS"}
+                      </span>
+                      <h3>{monthly.title || "Business Overview"}</h3>
+                    </div>
+                  </div>
+                  <p style={{ color: "#94a3b8", marginBottom: "20px" }}>
+                    {monthly.overview}
+                  </p>
+                  <div className={styles.monthlyStats}>
+                    <div>
+                      <span>Income</span>
+                      <strong>{monthly.metrics?.income?.display || "—"}</strong>
+                    </div>
+                    <div>
+                      <span>Expenses</span>
+                      <strong>{monthly.metrics?.expenses?.display || "—"}</strong>
+                    </div>
+                    <div>
+                      <span>Profit</span>
+                      <strong>{monthly.metrics?.profit?.display || "—"}</strong>
+                    </div>
+                  </div>
+                </article>
+              )}
+            </section>
+          </>
+        )}
+
+        {/* ==================== AI CHAT TAB ==================== */}
+        {activeTab === "chat" && (
+          <section className={styles.card} style={{ maxWidth: "700px", margin: "0 auto" }}>
             <div className={styles.cardHeader}>
               <div>
                 <span className={styles.eyebrow}>CUSTOMER INTELLIGENCE</span>

@@ -8,7 +8,7 @@ export default function LeadershipPage() {
             <section className="hero">
                 <div className="badge">👥 Founding &amp; Management Team</div>
                 <h1>Leadership Team</h1>
-                <p>The people behind HisabDo — combining software engineering with real-world business, finance and real estate experience.</p>
+                <p>The people behind XICTEK Systems and HisabDo — combining software engineering with real-world business, finance and real estate experience.</p>
             </section>
 
             {/* PHILOSOPHY */}
@@ -27,7 +27,7 @@ export default function LeadershipPage() {
                     <div className="split-text">
                         <div className="badge">Founder & CEO</div>
                         <h2>Mian Usman Khalid</h2>
-                        <p>Software Engineer, Entrepreneur, Businessman, Youth Political &amp; Social Leader. Responsible for the vision, technology, product development, and overall growth of HisabDo — he personally designs and builds the app.</p>
+                        <p>Software Engineer, Entrepreneur, Businessman, Youth Political &amp; Social Leader. Responsible for the vision, technology, product development, and overall growth of XICTEK Systems and its flagship product, HisabDo — he personally designs and builds the app.</p>
                         <Link className="btn" href="/founder">View Full Profile</Link>
                         <div className="social" style={{ marginTop: '16px' }}>
                             <a href="https://www.linkedin.com/in/mian-usman-khalid-39b8542a1" title="LinkedIn" target="_blank" rel="noopener noreferrer"><i className="fab fa-linkedin-in"></i></a>
