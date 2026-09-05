@@ -892,24 +892,8 @@ body.menu-open { overflow: hidden; }
 /* ═══════════════════════════════════════
    POLICY / ARTICLE CONTENT
    ═══════════════════════════════════════ */
-.policy-wrap {
-  max-width: 860px;
-  margin: 0 auto;
-  text-align: left;
-  animation: policyFadeIn .6s ease-out both;
-}
+.policy-wrap { max-width: 860px; margin: 0 auto; text-align: left; }
 
-@keyframes policyFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 .policy-section {
   background: var(--surface);
   border: 1px solid var(--border);
