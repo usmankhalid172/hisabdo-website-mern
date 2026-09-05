@@ -3,18 +3,8 @@
 import { useState, useEffect } from "react";
 import styles from "./ai.module.css";
 
-// --- SMART API BASE URL RESOLUTION ---
-const getApiBase = () => {
-  if (typeof window !== "undefined") {
-    // Agar live domain par hai, toh live backend URL use karein
-    if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
-      return "https://hisabdo-website-mern.onrender.com"; // Aapke live backend ka URL (Render/Heroku/AWS jo bhi ho)
-    }
-  }
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-};
-
-const API_BASE = getApiBase();
+// API Base URL (Standard Vercel Approach)
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -42,6 +32,8 @@ export default function AIPage() {
   useEffect(() => {
     const fetchAllAI = async () => {
       try {
+        console.log("Fetching from API_BASE:", API_BASE); // Debugging ke liye
+
         // 1. Health
         const hRes = await fetch(`${API_BASE}/api/ai/business-health`);
         setHealthData(await hRes.json());
@@ -334,7 +326,7 @@ export default function AIPage() {
             <>
               <div>
                 <span className={styles.eyebrow}>MONTHLY INSIGHTS</span>
-                ### {insightsData?.month || "Current Month"} Business Overview
+                <h3>{insightsData?.month || "Current Month"} Business Overview</h3>
                 <p>{insightsData?.summary}</p>
               </div>
               <div className={styles.monthlyStats}>
