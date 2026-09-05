@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import styles from "./ai.module.css";
 
+// API Base URL (Live site ke liye NEXT_PUBLIC_API_URL use hoga, local ke liye localhost)
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
@@ -156,32 +159,32 @@ export default function AIPage() {
     const fetchAllAI = async () => {
       try {
         // 1. Health
-        const hRes = await fetch("http://localhost:4000/api/ai/business-health");
+        const hRes = await fetch(`${API_BASE}/api/ai/business-health`);
         setHealthData(await hRes.json());
         setHealthLoading(false);
 
         // 2. Insights
-        const iRes = await fetch("http://localhost:4000/api/ai/monthly-insights");
+        const iRes = await fetch(`${API_BASE}/api/ai/monthly-insights`);
         setInsightsData(await iRes.json());
         setInsightsLoading(false);
 
         // 3. Alerts
-        const aRes = await fetch("http://localhost:4000/api/ai/alerts");
+        const aRes = await fetch(`${API_BASE}/api/ai/alerts`);
         setAlertsData(await aRes.json());
         setAlertsLoading(false);
 
         // 4. Recommendations
-        const rRes = await fetch("http://localhost:4000/api/ai/recommendations");
+        const rRes = await fetch(`${API_BASE}/api/ai/recommendations`);
         setRecsData(await rRes.json());
         setRecsLoading(false);
 
         // 5. Goals
-        const gRes = await fetch("http://localhost:4000/api/ai/goals");
+        const gRes = await fetch(`${API_BASE}/api/ai/goals`);
         setGoalData(await gRes.json());
         setGoalLoading(false);
 
         // 6. Customers
-        const cRes = await fetch("http://localhost:4000/api/ai/customers");
+        const cRes = await fetch(`${API_BASE}/api/ai/customers`);
         setCustomerData(await cRes.json());
         setCustomerLoading(false);
 
