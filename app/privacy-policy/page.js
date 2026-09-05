@@ -10,7 +10,7 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section className="section">
-                <div className="policy-wrap fade-up">
+                <div className="policy-wrap">
 
                     <div className="policy-section">
                         <p>By using the App, you agree to the practices described in this Privacy Policy.</p>
