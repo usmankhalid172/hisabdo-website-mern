@@ -11,6 +11,8 @@ Next.js frontend with an Express, MongoDB and Mongoose API.
 
 The API deliberately starts without MongoDB when `MONGODB_URI` is absent, so `/api/health` and auth configuration can be smoke-tested. Database-backed endpoints return `503` until MongoDB is configured.
 
+For production, deploy the Express API separately and set `NEXT_PUBLIC_API_BASE_URL` to its public HTTPS URL in the frontend deployment. The same variable configures the Next.js proxy; do not leave it pointing to `localhost` in production.
+
 ## API contract
 
 - `GET /api/health`
