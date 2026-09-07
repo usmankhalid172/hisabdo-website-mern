@@ -5,6 +5,14 @@ export const metadata = {
   metadataBase: new URL('https://hisabdo.app'),
   title: 'HisabDo | Smart Khata & Ledger App',
   description: 'HisabDo by XICTEK Systems — offline-first khata and ledger management for small businesses.',
+  icons: {
+    icon: [
+      { url: '/assets/images/app-logo.png', type: 'image/png' },
+      { url: '/assets/images/app-logo.webp', type: 'image/webp' },
+    ],
+    shortcut: '/assets/images/app-logo.png',
+    apple: '/assets/images/app-logo.png',
+  },
 };
 
 export default function RootLayout({ children }) {
