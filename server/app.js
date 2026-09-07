@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const api = require('./routes/api');
+const aiRoutes = require('./routes/aiRoutes'); // --- AI ROUTES ADDED ---
 const { connectDatabase } = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errors');
 
@@ -12,7 +13,10 @@ function createApp() {
   app.use(helmet());
   app.use(cors({ origin: process.env.FRONTEND_ORIGIN?.split(',').map((origin) => origin.trim()) || true }));
   app.use(express.json({ limit: '100kb' }));
+
   app.use('/api', api);
+  app.use('/api/ai', aiRoutes); // --- MOUNTED AI ROUTES ---
+
   app.use(notFound);
   app.use(errorHandler);
   return app;

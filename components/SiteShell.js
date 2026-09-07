@@ -1,38 +1,63 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import FadeUpObserver from './FadeUpObserver';
+import ScrollProgress from './ScrollProgress';
 
-const links = [
-  ['/', 'Home'],
-  ['/about', 'About'],
-  ['/about-app', 'App'],
-  ['/founder', 'Founder'],
-  ['/leadership', 'Leadership'],
-  ['/blog', 'Blog'],
-  ['/faq', 'FAQ'],
-  ['/careers', 'Careers'],
-  ['/media', 'Media'],
-  ['/xictek-systems', 'Company'],
-  ['/contact', 'Contact'],
+const NAV_LINKS = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/app', label: 'App' },
+  { href: '/founder', label: 'Founder' },
+  { href: '/leadership', label: 'Leadership' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/ai', label: 'AI' },
+  { href: '/careers', label: 'Careers' },
+  { href: '/media', label: 'Media' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/xictek-systems', label: 'Company' },
+  { href: '/privacy-policy', label: 'Privacy Policy' },
 ];
 
 const PLAY_URL = 'https://play.google.com/store/apps/details?id=com.usman.hisabdo';
 
 export default function SiteShell({ children }) {
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.classList.toggle('menu-open', open);
+    return () => document.body.classList.remove('menu-open');
+  }, [open]);
+
   return <>
-    <header className="nav">
+    <FadeUpObserver key={pathname} />
+    <ScrollProgress />
+    <header className={`nav ${scrolled ? 'nav-scrolled' : ''}`}>
       <div className="nav-inner">
-        <Link className="logo" href="/" onClick={() => setOpen(false)}>
+        <Link className="logo" href="/" onClick={() => setOpen(false)} aria-label="HisabDo home">
           <Image src="/assets/images/app-logo.webp" alt="HisabDo" width={38} height={38} />
           HisabDo<em>.</em>
         </Link>
 
         <nav className="nav-links" aria-label="Primary navigation">
-          {links.map(([href, label]) => <Link key={href} href={href}>{label}</Link>)}
+          {NAV_LINKS.map(({ href, label }) => <Link key={href} href={href} className={pathname === href ? 'active-nav' : ''}>{label}</Link>)}
         </nav>
 
         <a className="btn btn-sm nav-cta" href={PLAY_URL} target="_blank" rel="noopener noreferrer">
@@ -42,30 +67,30 @@ export default function SiteShell({ children }) {
         <button
           className={`hamburger${open ? ' open' : ''}`}
           onClick={() => setOpen(o => !o)}
-          aria-label="Toggle menu"
+          aria-label="Toggle navigation menu"
           aria-expanded={open}
         >
           <span></span><span></span><span></span>
         </button>
       </div>
 
-      {/* Mobile menu */}
-      <div className={`nav-mobile${open ? ' open' : ''}`} aria-hidden={!open}>
-        {links.map(([href, label]) => (
-          <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>
-        ))}
+        <nav className={`nav-mobile ${open ? 'open' : ''}`} aria-label="Mobile navigation">
+          {NAV_LINKS.map(({ href, label }) => (
+            <Link key={href} href={href} className={pathname === href ? 'active-nav' : ''}>
+              {label}
+            </Link>
+          ))}
         <a
           className="btn btn-sm"
           href={PLAY_URL}
           target="_blank"
           rel="noopener noreferrer"
           style={{ margin: '12px 24px 16px', alignSelf: 'flex-start' }}
-          onClick={() => setOpen(false)}
         >
           <i className="fab fa-google-play"></i> Get App
         </a>
-      </div>
-    </header>
+        </nav>
+      </header>
 
     {children}
 
@@ -128,3 +153,4 @@ export default function SiteShell({ children }) {
     </footer>
   </>;
 }
+

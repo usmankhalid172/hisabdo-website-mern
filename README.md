@@ -23,6 +23,38 @@ The API deliberately starts without MongoDB when `MONGODB_URI` is absent, so `/a
 
 Admin mutations require `Authorization: Bearer <token>` from the login endpoint. Request bodies are validated with Zod and all API errors use `{ "error": "..." }`, with validation details included when applicable.
 
+## AI backend integration
+
+The MERN backend connects to the Python AI microservice
+([`hisabdo-website-ai`](https://github.com/usmankhalid172/hisabdo-website-ai))
+through `services/aiClient.js`. Configure via `.env`:
+
+- `AI_BACKEND_URL` (default `http://127.0.0.1:5000`)
+- `AI_API_KEY` (optional bearer token)
+- `AI_TIMEOUT_MS` (default `5000`)
+- `GROQ_API_KEY` (optional)
+
+Endpoints (full schema in `docs/AI_ENDPOINTS_DOCUMENTATION.md`):
+
+- `GET /api/ai/health`
+- `GET /api/ai/business-health`
+- `GET /api/ai/monthly-insights`
+- `GET /api/ai/overview`
+- `POST /api/ai/expenses/predict-alerts`
+- `GET /api/expenses/alerts`
+- `POST /api/ai/customers/risk-score`
+- `POST /api/ai/customers/follow-up`
+- `GET /api/customers` and `GET /api/customers/:id`
+- `POST /api/ai/assistant/chat`
+- `POST /api/ai/faq`
+- `GET /api/ai/assistant/faqs`
+
+If the AI microservice is offline, every endpoint returns a deterministic
+fallback payload (`source: "fallback"`).
+
+Import `docs/postman/HisabDo_AI_API.postman_collection.json` into Postman or
+Thunder Client to exercise the endpoints.
+
 ## Verification
 
 Run `npm test` for schema validation tests and `npm run build` for the Next production build.
