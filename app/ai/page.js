@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import styles from "./ai.module.css";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const API_BASE = "";
 
 async function fetchJson(path, options) {
   const response = await fetch(`${API_BASE}${path}`, options);
