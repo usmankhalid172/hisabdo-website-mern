@@ -3,7 +3,15 @@
 import { useState, useEffect } from "react";
 import styles from "./ai.module.css";
 
-const API_BASE = "http://localhost:4000";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
+async function fetchJson(path, options) {
+  const response = await fetch(`${API_BASE}${path}`, options);
+  if (!response.ok) {
+    throw new Error(`${path} returned ${response.status}`);
+  }
+  return response.json();
+}
 
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -28,9 +36,17 @@ export default function AIPage() {
     setError(null);
 
     try {
-      // 1. Overview
-      const overviewRes = await fetch(`${API_BASE}/api/ai/overview`);
-      const overviewData = await overviewRes.json();
+      const [overviewResult, monthlyResult, alertsResult, customersResult] = await Promise.allSettled([
+        fetchJson("/api/ai/overview"),
+        fetchJson("/api/ai/monthly-insights"),
+        fetchJson("/api/expenses/alerts"),
+        fetchJson("/api/customers"),
+      ]);
+
+      const overviewData = overviewResult.status === "fulfilled" ? overviewResult.value : null;
+      const monthlyData = monthlyResult.status === "fulfilled" ? monthlyResult.value : null;
+      const alertsData = alertsResult.status === "fulfilled" ? alertsResult.value : null;
+      const customersData = customersResult.status === "fulfilled" ? customersResult.value : null;
 
       if (overviewData?.data) {
         setSummary(overviewData.data.summaryCard || null);
@@ -39,30 +55,24 @@ export default function AIPage() {
         setSource(overviewData.source || "");
       }
 
-      // 2. Monthly Insights
-      const monthlyRes = await fetch(`${API_BASE}/api/ai/monthly-insights`);
-      const monthlyData = await monthlyRes.json();
       if (monthlyData?.data) {
         setMonthly(monthlyData.data);
       }
 
-      // 3. Alerts
-      const alertsRes = await fetch(`${API_BASE}/api/expenses/alerts`);
-      const alertsData = await alertsRes.json();
       if (alertsData?.alerts) {
         setAlerts(alertsData.alerts);
       }
 
-      // 4. Customers
-      const customersRes = await fetch(`${API_BASE}/api/customers`);
-      const customersData = await customersRes.json();
       if (customersData?.customers) {
         setCustomers(customersData.customers);
         setCustomerSummary(customersData.summary || null);
       }
+      if ([overviewResult, monthlyResult, alertsResult, customersResult].every((result) => result.status === "rejected")) {
+        throw overviewResult.reason;
+      }
     } catch (err) {
       console.error("AI data fetch error:", err);
-      setError("Failed to load AI insights. Please try again.");
+      setError("The AI service is unavailable. Start the API server or check NEXT_PUBLIC_API_BASE_URL, then try again.");
     } finally {
       setLoading(false);
     }
@@ -80,13 +90,11 @@ export default function AIPage() {
     setChatReply(null);
 
     try {
-      const res = await fetch(`${API_BASE}/api/ai/assistant/chat`, {
+      const data = await fetchJson("/api/ai/assistant/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: chatQuery }),
       });
-
-      const data = await res.json();
       setChatReply(data?.data?.reply || "Sorry, I could not find an answer.");
     } catch (err) {
       setChatReply("Something went wrong. Please try again later.");

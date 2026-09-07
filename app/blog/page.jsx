@@ -202,7 +202,7 @@ export default function Blog() {
             <div className="card-icon"><i className="fas fa-newspaper"></i></div>
             <h3>HisabDo Introduces a Smarter Digital Accounting Solution</h3>
             <p>How HisabDo is helping small businesses manage finances efficiently with an offline-first digital ledger system.</p>
-            <br /><a className="btn" href="https://freepressrelease.io/press/hisabdo-introduces-a-smarter-digital-accounting-solution-to-help-small-businesses-manage-finances-efficiently" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Read Article</a>
+            <br /><a className="btn" href="https://freepressrelease.io/press/hisabdo-introduces-a-smarter-digital-accounting-solution-to-help-small-businesses-manage-finances-efficiently" target="_blank" rel="noopener noreferrer"><i className="fas fa-external-link-alt"></i> Read Article</a>
           </div>
           <div className="card card-left">
             <div className="blog-meta">Article &nbsp;•&nbsp; Medium</div>

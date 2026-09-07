@@ -41,6 +41,7 @@ export default function ScrollProgress() {
         className={`back-to-top ${visible ? "show" : ""}`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Back to top"
+        type="button"
       >
         <i className="fas fa-arrow-up" aria-hidden="true"></i>
       </button>

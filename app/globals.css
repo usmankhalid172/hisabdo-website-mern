@@ -81,6 +81,56 @@ body::before {
   z-index: 0;
 }
 
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 1100;
+  pointer-events: none;
+  background: transparent;
+}
+
+.scroll-progress-bar {
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(34, 197, 94, .45);
+}
+
+.back-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1050;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: rgba(10, 16, 29, .9);
+  color: var(--green-bright);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity .25s, visibility .25s, transform .25s, background .25s;
+}
+
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: var(--green-dim);
+  transform: translateY(-3px);
+}
+
 main { position: relative; z-index: 1; }
 
 /* ═══════════════════════════════════════
@@ -110,7 +160,7 @@ main { position: relative; z-index: 1; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 18px;
   padding: 0 32px;
 }
 
@@ -139,13 +189,15 @@ main { position: relative; z-index: 1; }
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
+  min-width: 0;
+  margin-left: auto;
 }
 
 .nav-links a {
   position: relative;
-  padding: 8px 13px;
-  font-size: 13.5px;
+  padding: 8px 10px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--muted);
   border-radius: 9px;
@@ -211,6 +263,11 @@ main { position: relative; z-index: 1; }
 
 /* Mobile nav drawer */
 .nav-mobile {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 2;
   display: none;
   flex-direction: column;
   overflow: hidden;
@@ -223,6 +280,7 @@ main { position: relative; z-index: 1; }
   max-height: 600px;
   border-top-color: var(--border);
 }
+.nav-mobile .active-nav { color: var(--green-bright); background: var(--green-dim); }
 .nav-mobile a {
   padding: 13px 24px;
   font-size: 14.5px;

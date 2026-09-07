@@ -61,7 +61,7 @@ export default function SiteShell({ children }) {
         </nav>
 
         <a className="btn btn-sm nav-cta" href={PLAY_URL} target="_blank" rel="noopener noreferrer">
-          <i className="fab fa-google-play"></i> Get App
+          <i className="fab fa-google-play" aria-hidden="true"></i> Get App
         </a>
 
         <button
@@ -74,7 +74,7 @@ export default function SiteShell({ children }) {
         </button>
       </div>
 
-        <nav className={`nav-mobile ${open ? 'open' : ''}`} aria-label="Mobile navigation">
+      <nav className={`nav-mobile ${open ? 'open' : ''}`} aria-label="Mobile navigation">
           {NAV_LINKS.map(({ href, label }) => (
             <Link key={href} href={href} className={pathname === href ? 'active-nav' : ''}>
               {label}
@@ -87,9 +87,9 @@ export default function SiteShell({ children }) {
           rel="noopener noreferrer"
           style={{ margin: '12px 24px 16px', alignSelf: 'flex-start' }}
         >
-          <i className="fab fa-google-play"></i> Get App
+          <i className="fab fa-google-play" aria-hidden="true"></i> Get App
         </a>
-        </nav>
+      </nav>
       </header>
 
     {children}
