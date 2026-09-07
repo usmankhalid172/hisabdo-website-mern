@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Careers — HisabDo | Join Our Team',
-  description: "Join the HisabDo team. Explore career opportunities, internships, and open roles at HisabDo — Pakistan's digital ledger app.",
+  title: 'Careers — XICTEK Systems | Join Our Team',
+  description: "Join XICTEK Systems. Explore career opportunities, internships, and open roles — building HisabDo and other practical software products.",
 };
 
 export default function Careers() {
@@ -11,9 +11,9 @@ export default function Careers() {
       {/* HERO */}
       <section className="hero">
         <div className="badge">🚀 We're Building Something Big</div>
-        <h1>Careers at HisabDo</h1>
+        <h1>Careers at XICTEK Systems</h1>
         <p style={{ color: 'var(--muted)', maxWidth: '560px', margin: '0 auto 28px' }}>
-          Join the HisabDo team and help us build a digital finance app for users and small businesses in Pakistan. We value talent, hustle, and people who want to create real impact.
+          Join XICTEK Systems and help us build practical software products for businesses across Pakistan. HisabDo is our flagship product — and we value talent, hustle, and people who want to create real impact.
         </p>
         <a className="btn" href="https://forms.gle/YhAfaw1CzCF9mEZo9" target="_blank" rel="noopener noreferrer">
           <i className="fas fa-paper-plane"></i> Register for Internship
@@ -181,7 +181,7 @@ export default function Careers() {
             <div className="card-icon" style={{ flexShrink: 0 }}><i className="fas fa-comments"></i></div>
             <div>
               <h3 style={{ fontSize: '20px', marginBottom: '10px' }}>Practice Before You Apply</h3>
-              <p style={{ color: 'var(--muted)', marginBottom: '8px' }}>Mian Usman Khalid (Founder & CEO) is personally conducting mock interviews to help aspiring developers, designers, and entrepreneurs prepare for real-world job interviews.</p>
+              <p style={{ color: 'var(--muted)', marginBottom: '8px' }}>Mian Usman Khalid (Founder &amp; CEO of XICTEK Systems) is personally conducting mock interviews to help aspiring developers, designers, and entrepreneurs prepare for real-world job interviews.</p>
               <p style={{ color: 'var(--muted)', marginBottom: '24px' }}>Whether you're a student, fresh graduate, or career switcher — this is a free opportunity to get honest feedback, improve your interview skills, and learn what hiring managers actually look for.</p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '24px' }}>
                 <span style={{ background: 'rgba(34,197,94,.08)', border: '1px solid rgba(34,197,94,.2)', color: 'var(--green)', padding: '5px 14px', borderRadius: '20px', fontSize: '13px' }}>✅ Free of Cost</span>

@@ -85,6 +85,7 @@ export default function About() {
           <div className="card"><h3>Founder</h3><p>Learn more about the person behind the project and the product vision.</p><Link className="btn-outline" href="/mian-usman-khalid">View Founder Profile</Link></div>
           <div className="card"><h3>FAQ</h3><p>Find answers about offline use, backups, reports, privacy and app support.</p><Link className="btn-outline" href="/faq">Read FAQs</Link></div>
           <div className="card"><h3>Contact</h3><p>Use the support page for feedback, questions, bug reports or feature requests.</p><Link className="btn-outline" href="/contact">Get in Touch</Link></div>
+          <div className="card"><h3>About XICTEK Systems</h3><p>HisabDo is a product developed and maintained by XICTEK Systems. Learn about the company behind the app.</p><Link className="btn-outline" href="/xictek-systems">Visit Company Page</Link></div>
         </div>
       </section>
     </>
