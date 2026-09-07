@@ -1255,6 +1255,13 @@ p, li, td, th, a, .card, .section-sub { overflow-wrap: anywhere; }
   .nav-menu nav a { padding-left: 9px; padding-right: 9px; }
 }
 
+@media (max-width: 820px) and (min-width: 769px) {
+  .nav { padding-left: 16px; padding-right: 16px; }
+  .nav-menu nav { gap: 0; margin-right: 8px; }
+  .nav-menu nav a { padding-left: 6px; padding-right: 6px; font-size: 12.5px; }
+  .nav-menu .btn { padding-left: 14px; padding-right: 14px; }
+}
+
 @media (max-width: 768px) {
   .nav { padding-left: 16px; padding-right: 16px; }
   .nav > .logo { min-width: 0; }

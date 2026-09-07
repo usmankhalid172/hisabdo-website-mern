@@ -1,0 +1,157 @@
+{
+  "info": {
+    "name": "HisabDo AI Integration API",
+    "description": "Endpoints exposed by the HisabDo MERN backend that integrate with the Python AI microservice (hisabdo-website-ai).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000", "type": "string" },
+    { "key": "aiBackendUrl", "value": "http://127.0.0.1:5000", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "AI Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/ai/health", "host": ["{{baseUrl}}"], "path": ["api", "ai", "health"] }
+      }
+    },
+    {
+      "name": "Business Health Score",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/ai/business-health?sales=150000&expenses=90000&customers=12&pending_payments=4&pending_amount=15000",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "ai", "business-health"],
+          "query": [
+            { "key": "sales", "value": "150000" },
+            { "key": "expenses", "value": "90000" },
+            { "key": "customers", "value": "12" },
+            { "key": "pending_payments", "value": "4" },
+            { "key": "pending_amount", "value": "15000" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Monthly Insights",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/ai/monthly-insights?month=August%202026&income=150000&expenses=90000",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "ai", "monthly-insights"],
+          "query": [
+            { "key": "month", "value": "August 2026" },
+            { "key": "income", "value": "150000" },
+            { "key": "expenses", "value": "90000" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "AI Overview (dashboard)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/ai/overview", "host": ["{{baseUrl}}"], "path": ["api", "ai", "overview"] }
+      }
+    },
+    {
+      "name": "Predict Expense Alert",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"category\": \"Inventory\",\n  \"historical_monthly_spending\": [40000, 42000],\n  \"current_spending\": 65000\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/ai/expenses/predict-alerts", "host": ["{{baseUrl}}"], "path": ["api", "ai", "expenses", "predict-alerts"] }
+      }
+    },
+    {
+      "name": "Expense Alerts (integrated)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/expenses/alerts", "host": ["{{baseUrl}}"], "path": ["api", "expenses", "alerts"] }
+      }
+    },
+    {
+      "name": "Customer Risk Score",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer_id\": \"cust-1\",\n  \"average_purchase_interval\": 10,\n  \"days_since_last_purchase\": 35,\n  \"pending_payment\": 12000\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/ai/customers/risk-score", "host": ["{{baseUrl}}"], "path": ["api", "ai", "customers", "risk-score"] }
+      }
+    },
+    {
+      "name": "Customer Follow-up",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  { \"customer_id\": \"cust-1\", \"purchase_date\": \"2026-07-20\", \"amount\": 9500 },\n  { \"customer_id\": \"cust-2\", \"purchase_date\": \"2026-08-06\", \"amount\": 4200 }\n]"
+        },
+        "url": { "raw": "{{baseUrl}}/api/ai/customers/follow-up", "host": ["{{baseUrl}}"], "path": ["api", "ai", "customers", "follow-up"] }
+      }
+    },
+    {
+      "name": "Customer List (AI merged)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/customers", "host": ["{{baseUrl}}"], "path": ["api", "customers"] }
+      }
+    },
+    {
+      "name": "Customer By ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/customers/cust-1", "host": ["{{baseUrl}}"], "path": ["api", "customers", "cust-1"] }
+      }
+    },
+    {
+      "name": "AI Assistant Chat",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"What is HisabDo?\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/ai/assistant/chat", "host": ["{{baseUrl}}"], "path": ["api", "ai", "assistant", "chat"] }
+      }
+    },
+    {
+      "name": "FAQ alias",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"Does HisabDo work without internet?\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/ai/faq", "host": ["{{baseUrl}}"], "path": ["api", "ai", "faq"] }
+      }
+    },
+    {
+      "name": "List FAQs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/ai/assistant/faqs", "host": ["{{baseUrl}}"], "path": ["api", "ai", "assistant", "faqs"] }
+      }
+    }
+  ]
+}

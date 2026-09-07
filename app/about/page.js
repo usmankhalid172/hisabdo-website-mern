@@ -7,7 +7,7 @@ export default function AboutPage() {
             <section className="hero">
                 <div className="badge">📖 About HisabDo</div>
                 <h1>Built for Practical Financial Tracking</h1>
-                <p>HisabDo is an offline-first khata and ledger app created for shopkeepers, freelancers, small businesses and everyday users who need a simple way to manage money, customers and records.</p>
+                <p>HisabDo is a flagship product of XICTEK Systems — an offline-first khata and ledger app created for shopkeepers, freelancers, small businesses and everyday users who need a simple way to manage money, customers and records.</p>
                 <div className="hero-buttons">
                     <a className="btn" href="https://play.google.com/store/apps/details?id=com.usman.hisabdo" target="_blank" rel="noopener noreferrer"><i className="fab fa-google-play"></i> Download Free</a>
                     <Link className="btn-outline" href="/contact">Contact Support</Link>

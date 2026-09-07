@@ -72,6 +72,10 @@ router.post('/blog', requireAdmin, requireDatabase, validate(blogSchema), async 
 router.put('/blog/:id', requireAdmin, requireDatabase, validate(blogSchema.partial()), updateById(BlogPost));
 deleteRoute('/blog/:id', BlogPost);
 
+router.use('/ai', require('../../routes/aiRoutes'));
+router.use('/expenses', require('../../routes/expenseRoutes'));
+router.use('/customers', require('../../routes/customerRoutes'));
+
 function updateById(Model) {
   return async (req, res) => {
     const parsed = id.safeParse(req.params.id);
