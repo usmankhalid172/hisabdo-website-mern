@@ -5,13 +5,36 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #22c55e;
+  background: #0f172a;
   color: white;
-  font-size: 24px;
-  border: none;
+  border: 2px solid rgba(255, 255, 255, 0.15);
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   z-index: 1000;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.floatingButton:hover {
+  transform: scale(1.05);
+  background: #16a34a;
+}
+
+.floatingButton:active {
+  transform: scale(0.95);
+}
+
+.onlineDot {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid #0f172a;
 }
 
 .panel {
@@ -30,7 +53,6 @@
   z-index: 1001;
 }
 
-/* Desktop: docked bottom-right, near the floating button */
 @media (min-width: 641px) {
   .panel {
     right: 24px;
@@ -38,7 +60,6 @@
   }
 }
 
-/* Mobile: centered on screen */
 @media (max-width: 640px) {
   .panel {
     top: 50%;
@@ -51,17 +72,29 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
   padding: 16px;
   background: #22c55e;
   color: white;
+}
+
+.headerAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .headerText {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
 }
 
 .headerTitle {
@@ -69,28 +102,18 @@
   font-size: 15px;
 }
 
-.headerStatus {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+.headerSubtitle {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.85);
-}
-
-.statusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ffffff;
-  display: inline-block;
 }
 
 .closeButton {
   background: transparent;
   border: none;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .messagesArea {
@@ -128,6 +151,33 @@
   padding: 0 16px;
 }
 
+.quickReplies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 16px 12px;
+}
+
+.pillButton {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pillButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.pillButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .inputRow {
   display: flex;
   gap: 8px;
@@ -146,16 +196,20 @@
 }
 
 .sendButton {
-  padding: 10px 18px;
-  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   border: none;
   background: #22c55e;
   color: white;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .sendButton:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
