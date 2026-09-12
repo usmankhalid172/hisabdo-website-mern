@@ -1,201 +1,167 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import styles from "./ChatBot.module.css";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+const QUICK_REPLIES = [
+  "Explore Features",
+  "Get Started",
+  "Pricing",
+];
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: "assistant", text: "Assalamualaikum! I am HisabDo AI Assistant. How can I help you today?" }
+    {
+      role: "ai",
+      text: "Assalamualaikum! I am HisabDo AI Assistant. How can I help you today?",
+    },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const messagesEndRef = useRef(null);
 
-  const sendMessage = async () => {
-    if (!input.trim() || loading) return;
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isOpen]);
 
-    const userMessage = input.trim();
+  const sendQuery = async (query) => {
+    if (!query || loading) return;
+
+    setMessages((prev) => [...prev, { role: "user", text: query }]);
     setInput("");
-    setMessages((prev) => [...prev, { role: "user", text: userMessage }]);
     setLoading(true);
+    setError(null);
 
     try {
-      const res = await fetch("/api/ai/assistant/chat", {
+      const res = await fetch(`${API_BASE}/api/ai/assistant/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: userMessage }),
+        body: JSON.stringify({ query }),
       });
 
-      const data = await res.json();
-      const reply = data?.data?.reply || "Sorry, I could not understand. Please try again.";
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
 
-      setMessages((prev) => [...prev, { role: "assistant", text: reply }]);
+      const data = await res.json();
+      const reply = data?.data?.reply || "Sorry, I couldn't find an answer.";
+      setMessages((prev) => [...prev, { role: "ai", text: reply }]);
     } catch (err) {
+      setError("Something went wrong. Please try again.");
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", text: "Something went wrong. Please try again later." },
+        { role: "ai", text: "Sorry, something went wrong. Please try again." },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSend = (e) => {
+    e.preventDefault();
+    sendQuery(input.trim());
+  };
+
   return (
     <>
-      {/* Floating Button */}
       <button
-        onClick={() => setIsOpen(true)}
-        style={{
-          position: "fixed",
-          bottom: "24px",
-          right: "24px",
-          width: "60px",
-          height: "60px",
-          borderRadius: "50%",
-          background: "#22c55e",
-          color: "white",
-          border: "none",
-          fontSize: "24px",
-          cursor: "pointer",
-          boxShadow: "0 8px 25px rgba(34, 197, 94, 0.4)",
-          zIndex: 9999,
-          display: isOpen ? "none" : "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        onClick={() => setIsOpen((prev) => !prev)}
+        className={styles.floatingButton}
+        aria-label={isOpen ? "Close AI Chatbot" : "Open AI Chatbot"}
       >
-        💬
+        {isOpen ? (
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        ) : (
+          <>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+            </svg>
+            <span className={styles.onlineDot} />
+          </>
+        )}
       </button>
 
-      {/* Centered Chat Modal */}
       {isOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.55)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 10000,
-            padding: "16px",
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "420px",
-              height: "560px",
-              background: "#0f172a",
-              borderRadius: "18px",
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-              border: "1px solid rgba(255,255,255,0.08)",
-              boxShadow: "0 25px 60px rgba(0,0,0,0.5)",
-            }}
-          >
-            {/* Header */}
-            <div
-              style={{
-                padding: "16px 18px",
-                background: "#166534",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div>
-                <strong style={{ color: "white" }}>HisabDo AI Assistant</strong>
-                <p style={{ margin: 0, fontSize: "12px", color: "#bbf7d0" }}>Online</p>
-              </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "white",
-                  fontSize: "22px",
-                  cursor: "pointer",
-                }}
-              >
-                ×
-              </button>
+        <div className={styles.panel}>
+          <div className={styles.header}>
+            <div className={styles.headerAvatar}>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="10" rx="2" />
+                <circle cx="12" cy="5" r="2" />
+                <line x1="12" y1="7" x2="12" y2="11" />
+                <line x1="8" y1="16" x2="8" y2="16" />
+                <line x1="16" y1="16" x2="16" y2="16" />
+              </svg>
             </div>
-
-            {/* Messages */}
-            <div
-              style={{
-                flex: 1,
-                padding: "16px",
-                overflowY: "auto",
-                display: "flex",
-                flexDirection: "column",
-                gap: "12px",
-              }}
-            >
-              {messages.map((msg, i) => (
-                <div
-                  key={i}
-                  style={{
-                    alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-                    background: msg.role === "user" ? "#22c55e" : "#1e293b",
-                    color: "white",
-                    padding: "10px 14px",
-                    borderRadius: "14px",
-                    maxWidth: "80%",
-                    fontSize: "14px",
-                    lineHeight: "1.5",
-                  }}
-                >
-                  {msg.text}
-                </div>
-              ))}
-
-              {loading && (
-                <div style={{ color: "#94a3b8", fontSize: "13px" }}>Thinking...</div>
-              )}
+            <div className={styles.headerText}>
+              <span className={styles.headerTitle}>HisabDo AI Assistant</span>
+              <span className={styles.headerSubtitle}>Your AI guide to HisabDo</span>
             </div>
-
-            {/* Input */}
-            <div
-              style={{
-                padding: "12px",
-                borderTop: "1px solid rgba(255,255,255,0.08)",
-                display: "flex",
-                gap: "8px",
-              }}
+            <button
+              onClick={() => setIsOpen(false)}
+              className={styles.closeButton}
+              aria-label="Close chat"
             >
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                placeholder="Type your message..."
-                style={{
-                  flex: 1,
-                  padding: "12px 14px",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  background: "#1e293b",
-                  color: "white",
-                  outline: "none",
-                }}
-              />
-              <button
-                onClick={sendMessage}
-                style={{
-                  background: "#22c55e",
-                  border: "none",
-                  color: "white",
-                  padding: "0 16px",
-                  borderRadius: "12px",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                }}
-              >
-                Send
-              </button>
-            </div>
+              ✕
+            </button>
           </div>
+
+          <div className={styles.messagesArea}>
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`${styles.messageBubble} ${
+                  msg.role === "user" ? styles.userBubble : styles.aiBubble
+                }`}
+              >
+                {msg.text}
+              </div>
+            ))}
+            {loading && <div className={styles.aiBubble}>Thinking...</div>}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {error && <div className={styles.errorText}>{error}</div>}
+
+          <div className={styles.quickReplies}>
+            {QUICK_REPLIES.map((label) => (
+              <button
+                key={label}
+                type="button"
+                className={styles.pillButton}
+                onClick={() => sendQuery(label)}
+                disabled={loading}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={handleSend} className={styles.inputRow}>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about HisabDo..."
+              className={styles.input}
+            />
+            <button
+              type="submit"
+              disabled={loading || !input.trim()}
+              className={styles.sendButton}
+              aria-label="Send message"
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+          </form>
         </div>
       )}
     </>
