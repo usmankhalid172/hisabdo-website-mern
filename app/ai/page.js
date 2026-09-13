@@ -27,10 +27,6 @@ export default function AIPage() {
   const [customerSummary, setCustomerSummary] = useState(null);
   const [monthly, setMonthly] = useState(null);
 
-  const [chatQuery, setChatQuery] = useState("");
-  const [chatReply, setChatReply] = useState(null);
-  const [chatLoading, setChatLoading] = useState(false);
-
   const fetchAllData = async () => {
     setLoading(true);
     setError(null);
@@ -81,27 +77,6 @@ export default function AIPage() {
   useEffect(() => {
     fetchAllData();
   }, []);
-
-  const handleChatSubmit = async (e) => {
-    e.preventDefault();
-    if (!chatQuery.trim()) return;
-
-    setChatLoading(true);
-    setChatReply(null);
-
-    try {
-      const data = await fetchJson("/api/ai/assistant/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: chatQuery }),
-      });
-      setChatReply(data?.data?.reply || "Sorry, I could not find an answer.");
-    } catch (err) {
-      setChatReply("Something went wrong. Please try again later.");
-    } finally {
-      setChatLoading(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -166,7 +141,6 @@ export default function AIPage() {
             ["overview", "Overview"],
             ["insights", "Insights"],
             ["customers", "Customers"],
-            ["chat", "AI Assistant"],
           ].map(([key, label]) => (
             <button
               key={key}
@@ -178,7 +152,7 @@ export default function AIPage() {
           ))}
         </nav>
 
-        {/* ==================== OVERVIEW / INSIGHTS ==================== */}
+        {/* OVERVIEW / INSIGHTS TABS */}
         {(activeTab === "overview" || activeTab === "insights") && (
           <>
             {summary && (
@@ -319,59 +293,9 @@ export default function AIPage() {
               </article>
             </section>
 
-            {/* Customers + Monthly */}
-            <section className={styles.mainGrid}>
-              <article className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <div>
-                    <span className={styles.eyebrow}>CUSTOMER INTELLIGENCE</span>
-                    <h3>Customer Insights</h3>
-                  </div>
-                  <span className={styles.customerIcon}>👥</span>
-                </div>
-
-                {customerSummary && (
-                  <div className={styles.customerSummary}>
-                    <div>
-                      <strong>{customerSummary.needFollowUp ?? 0}</strong>
-                      <span>Need follow-up</span>
-                    </div>
-                    <div>
-                      <strong>{customerSummary.activeCustomers ?? 0}</strong>
-                      <span>Active customers</span>
-                    </div>
-                    <div>
-                      <strong>{customerSummary.activityScore ?? 0}%</strong>
-                      <span>Activity score</span>
-                    </div>
-                  </div>
-                )}
-
-                {customers.slice(0, 3).map((cust) => (
-                  <div className={styles.customerRow} key={cust.id || cust.name}>
-                    <div className={styles.avatar}>{cust.initials || "CU"}</div>
-                    <div>
-                      <h4>{cust.name}</h4>
-                      <p>
-                        {cust.followUpRequired
-                          ? "Follow-up recommended"
-                          : `Last purchase ${cust.lastPurchaseDaysAgo || "—"} days ago`}
-                      </p>
-                    </div>
-                    <span
-                      className={
-                        cust.riskBadge === "High" ? styles.highBadge : styles.mediumBadge
-                      }
-                    >
-                      {cust.riskBadge || "Low"}
-                    </span>
-                  </div>
-                ))}
-
-                <button className={styles.fullButton}>View customer insights →</button>
-              </article>
-
-              {monthly && (
+            {/* Monthly Insights */}
+            {monthly && (
+              <section className={styles.mainGrid}>
                 <article className={styles.card}>
                   <div className={styles.cardHeader}>
                     <div>
@@ -399,65 +323,63 @@ export default function AIPage() {
                     </div>
                   </div>
                 </article>
-              )}
-            </section>
+              </section>
+            )}
           </>
         )}
 
-        {/* ==================== AI CHAT ==================== */}
-        {activeTab === "chat" && (
-          <section className={styles.card} style={{ maxWidth: "700px", margin: "0 auto" }}>
-            <div className={styles.cardHeader}>
-              <div>
-                <span className={styles.eyebrow}>AI ASSISTANT</span>
-                <h3>Ask HisabDo AI</h3>
+        {/* CUSTOMERS TAB */}
+        {activeTab === "customers" && (
+          <section className={styles.mainGrid}>
+            <article className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <span className={styles.eyebrow}>CUSTOMER INTELLIGENCE</span>
+                  <h3>Customer Insights</h3>
+                </div>
+                <span className={styles.customerIcon}>👥</span>
               </div>
-              <span className={styles.sparkle}>✦</span>
-            </div>
 
-            <form onSubmit={handleChatSubmit}>
-              <input
-                type="text"
-                value={chatQuery}
-                onChange={(e) => setChatQuery(e.target.value)}
-                placeholder="Ask anything about HisabDo..."
-                style={{
-                  width: "100%",
-                  padding: "14px 16px",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  background: "rgba(255,255,255,0.04)",
-                  color: "white",
-                  marginBottom: "14px",
-                  fontSize: "15px",
-                }}
-              />
-              <button
-                type="submit"
-                className={styles.primaryButton}
-                disabled={chatLoading}
-                style={{ width: "100%" }}
-              >
-                {chatLoading ? "Thinking..." : "Ask AI Assistant"}
-              </button>
-            </form>
+              {customerSummary && (
+                <div className={styles.customerSummary}>
+                  <div>
+                    <strong>{customerSummary.needFollowUp ?? 0}</strong>
+                    <span>Need follow-up</span>
+                  </div>
+                  <div>
+                    <strong>{customerSummary.activeCustomers ?? 0}</strong>
+                    <span>Active customers</span>
+                  </div>
+                  <div>
+                    <strong>{customerSummary.activityScore ?? 0}%</strong>
+                    <span>Activity score</span>
+                  </div>
+                </div>
+              )}
 
-            {chatReply && (
-              <div
-                style={{
-                  marginTop: "24px",
-                  padding: "18px",
-                  borderRadius: "14px",
-                  background: "rgba(34, 197, 94, 0.08)",
-                  border: "1px solid rgba(34, 197, 94, 0.2)",
-                }}
-              >
-                <strong style={{ color: "#22c55e" }}>AI Reply:</strong>
-                <p style={{ marginTop: "10px", lineHeight: "1.6", color: "#e2e8f0" }}>
-                  {chatReply}
-                </p>
-              </div>
-            )}
+              {customers.slice(0, 3).map((cust) => (
+                <div className={styles.customerRow} key={cust.id || cust.name}>
+                  <div className={styles.avatar}>{cust.initials || "CU"}</div>
+                  <div>
+                    <h4>{cust.name}</h4>
+                    <p>
+                      {cust.followUpRequired
+                        ? "Follow-up recommended"
+                        : `Last purchase ${cust.lastPurchaseDaysAgo || "—"} days ago`}
+                    </p>
+                  </div>
+                  <span
+                    className={
+                      cust.riskBadge === "High" ? styles.highBadge : styles.mediumBadge
+                    }
+                  >
+                    {cust.riskBadge || "Low"}
+                  </span>
+                </div>
+              ))}
+
+              <button className={styles.fullButton}>View customer insights →</button>
+            </article>
           </section>
         )}
 

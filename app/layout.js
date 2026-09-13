@@ -1,5 +1,6 @@
 import './globals.css';
 import SiteShell from '../components/SiteShell';
+import ChatBot from '../components/ChatBot';
 
 export const metadata = {
   metadataBase: new URL('https://hisabdo.app'),
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
       </head>
       <body suppressHydrationWarning>
         <SiteShell>{children}</SiteShell>
+        <ChatBot />
       </body>
     </html>
   );
