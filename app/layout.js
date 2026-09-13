@@ -6,7 +6,6 @@ import {
   SITE,
   organizationSchema,
   softwareApplicationSchema,
-  mobileApplicationSchema,
 } from '../lib/seo';
 
 export const metadata = {
@@ -72,7 +71,6 @@ export default function RootLayout({ children }) {
           data={[
             organizationSchema(),
             softwareApplicationSchema(),
-            mobileApplicationSchema(),
           ]}
         />
       </head>

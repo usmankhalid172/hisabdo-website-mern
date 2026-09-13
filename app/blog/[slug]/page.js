@@ -69,7 +69,17 @@ const CATEGORY_LINKS = {
     { label: 'Udhar Management App', href: '/udhar-management-app' },
     { label: 'Receivable & Payable Tracker', href: '/receivable-payable-tracker' },
   ],
-  'Shopkeeper Management': [
+  'Udhar Management': [
+    { label: 'Udhar Management App', href: '/udhar-management-app' },
+    { label: 'Customer Ledger App', href: '/customer-ledger-app' },
+    { label: 'Khata Book App', href: '/khata-book-app' },
+  ],
+  'Shopkeeper Accounting': [
+    { label: 'Shopkeeper Accounting App', href: '/shopkeeper-accounting-app' },
+    { label: 'Khata Book App', href: '/khata-book-app' },
+    { label: 'Small Business Accounting App', href: '/small-business-accounting-app' },
+  ],
+  'Shopkeeper Accounting': [
     { label: 'Shopkeeper Accounting App', href: '/shopkeeper-accounting-app' },
     { label: 'Khata Book App', href: '/khata-book-app' },
     { label: 'Small Business Accounting App', href: '/small-business-accounting-app' },
@@ -79,10 +89,10 @@ const CATEGORY_LINKS = {
     { label: 'Business Expense Tracker', href: '/business-expense-tracker' },
     { label: 'Receivable & Payable Tracker', href: '/receivable-payable-tracker' },
   ],
-  'Financial Record Keeping': [
-    { label: 'Expense Management App', href: '/expense-management-app' },
-    { label: 'Small Business Accounting App', href: '/small-business-accounting-app' },
-    { label: 'Customer Ledger App', href: '/customer-ledger-app' },
+  'Hisaab Kitab': [
+    { label: 'Hisab Kitab App', href: '/hisab-kitab-app' },
+    { label: 'Khata Book App', href: '/khata-book-app' },
+    { label: 'Udhar Management App', href: '/udhar-management-app' },
   ],
 };
 

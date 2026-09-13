@@ -4,7 +4,12 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/careers-admin', '/api/admin/', '/api/ai/'],
+        disallow: [
+          '/careers-admin',
+          '/api/admin/',
+          '/api/ai/',
+          '/xicteksystems',
+        ],
       },
     ],
     sitemap: 'https://hisabdo.app/sitemap.xml',

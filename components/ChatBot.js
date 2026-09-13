@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import styles from "./ChatBot.module.css";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE = "";
 
 const QUICK_REPLIES = [
   "Explore Features",
