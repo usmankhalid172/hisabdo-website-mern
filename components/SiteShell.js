@@ -10,19 +10,13 @@ import ScrollProgress from './ScrollProgress';
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
-  { href: '/app', label: 'App' },
+  { href: '/about-app', label: 'App' },
+  { href: '/mian-usman-khalid', label: 'Founder' },
+  { href: '/leadership', label: 'Leadership' },
   { href: '/blog', label: 'Blog' },
   { href: '/faq', label: 'FAQ' },
-  { href: '/ai', label: 'AI' },
   { href: '/careers', label: 'Careers' },
   { href: '/contact', label: 'Contact' },
-];
-
-const NAV_LINKS_MOBILE_EXTRA = [
-  { href: '/founder', label: 'Founder' },
-  { href: '/leadership', label: 'Leadership' },
-  { href: '/media', label: 'Media' },
-  { href: '/xictek-systems', label: 'Company' },
   { href: '/privacy-policy', label: 'Privacy Policy' },
 ];
 
@@ -78,7 +72,7 @@ export default function SiteShell({ children }) {
       </div>
 
       <nav className={`nav-mobile ${open ? 'open' : ''}`} aria-label="Mobile navigation">
-          {[...NAV_LINKS, ...NAV_LINKS_MOBILE_EXTRA].map(({ href, label }) => (
+          {NAV_LINKS.map(({ href, label }) => (
             <Link key={href} href={href} className={pathname === href ? 'active-nav' : ''}>
               {label}
             </Link>

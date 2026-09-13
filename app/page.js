@@ -104,6 +104,31 @@ export default function Home() {
         </Reveal>
       </section>
 
+      {/* ═══ USE HISABDO YOUR WAY ═══ */}
+      <section className="section">
+        <Reveal><h2>Use HisabDo Your Way</h2></Reveal>
+        <div className="section-divider"></div>
+        <div className="grid">
+          <Reveal>
+            <div className="card">
+              <div className="card-icon"><i className="fas fa-user"></i></div>
+              <h3>Guest Mode</h3>
+              <p>No account required. You can use supported features offline and keep local records available on your device.</p>
+            </div>
+          </Reveal>
+          <Reveal delay={70}>
+            <div className="card">
+              <div className="card-icon"><i className="fas fa-cloud-upload-alt"></i></div>
+              <h3>Signed-in Mode</h3>
+              <p>Create or sign in to your HisabDo account. When connected to the internet, supported data can be synchronized with cloud infrastructure.</p>
+            </div>
+          </Reveal>
+        </div>
+        <Reveal delay={140}>
+          <p className="section-sub">HisabDo is designed as an offline-first app. You can use it as a guest without an account. If you sign in, supported data can be synchronized with our cloud infrastructure when your internet connection is available.</p>
+        </Reveal>
+      </section>
+
       {/* ═══ CORE FEATURES ═══ */}
       <section className="section" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(34,197,94,.05) 0%, transparent 70%)' }}>
         <Reveal><h2>Everything You Need</h2></Reveal>
