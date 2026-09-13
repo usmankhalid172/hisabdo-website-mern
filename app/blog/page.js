@@ -1,4 +1,13 @@
 import Link from 'next/link';
+import { buildMetadata } from '../../lib/seo';
+
+export const metadata = buildMetadata({
+  title: 'Blog — Expense Tracking, Khata Book & Small Business Finance',
+  description:
+    'Practical guides on expense tracking, khata book management, customer ledger, udhar management and small business accounting — by Mian Usman Khalid.',
+  path: '/blog',
+  keywords: ['expense tracking blog', 'khata book guide', 'small business finance tips', 'udhar management guide'],
+});
 
 export default function BlogPage() {
     return (
