@@ -1,105 +1,263 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styles from "./ai.module.css";
 
-const API_BASE = "";
-
-async function fetchJson(path, options) {
-  const response = await fetch(`${API_BASE}${path}`, options);
-  if (!response.ok) {
-    throw new Error(`${path} returned ${response.status}`);
-  }
-  return response.json();
-}
+// Live deployment:
+// NEXT_PUBLIC_API_URL = your live Node/Express backend URL
+//
+// Local development:
+// http://localhost:4000
+const API_BASE = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
+).replace(/\/$/, "");
 
 export default function AIPage() {
   const [activeTab, setActiveTab] = useState("overview");
-  const [loading, setLoading] = useState(true);
+
+  // API states
+  const [healthData, setHealthData] = useState(null);
+  const [healthLoading, setHealthLoading] = useState(true);
+
+  const [insightsData, setInsightsData] = useState(null);
+  const [insightsLoading, setInsightsLoading] = useState(true);
+
+  const [alertsData, setAlertsData] = useState([]);
+  const [alertsLoading, setAlertsLoading] = useState(true);
+
+  const [recsData, setRecsData] = useState([]);
+  const [recsLoading, setRecsLoading] = useState(true);
+
+  const [goalData, setGoalData] = useState(null);
+  const [goalLoading, setGoalLoading] = useState(true);
+
+  const [customerData, setCustomerData] = useState(null);
+  const [customerLoading, setCustomerLoading] = useState(true);
+
   const [error, setError] = useState(null);
-  const [source, setSource] = useState("");
 
-  const [summary, setSummary] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [recommendations, setRecommendations] = useState([]);
-  const [alerts, setAlerts] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [customerSummary, setCustomerSummary] = useState(null);
-  const [monthly, setMonthly] = useState(null);
+  // Chat states
+  const [chatQuery, setChatQuery] = useState("");
+  const [chatReply, setChatReply] = useState(null);
+  const [chatLoading, setChatLoading] = useState(false);
 
-  const fetchAllData = async () => {
-    setLoading(true);
+  // =========================================================
+  // FETCH ALL AI DATA
+  // =========================================================
+  const fetchAllAI = useCallback(async () => {
     setError(null);
 
+    setHealthLoading(true);
+    setInsightsLoading(true);
+    setAlertsLoading(true);
+    setRecsLoading(true);
+    setGoalLoading(true);
+    setCustomerLoading(true);
+
     try {
-      const [overviewResult, monthlyResult, alertsResult, customersResult] = await Promise.allSettled([
-        fetchJson("/api/ai/overview"),
-        fetchJson("/api/ai/monthly-insights"),
-        fetchJson("/api/expenses/alerts"),
-        fetchJson("/api/customers"),
+      const requests = [
+        fetch(`${API_BASE}/api/ai/business-health`),
+        fetch(`${API_BASE}/api/ai/monthly-insights`),
+        fetch(`${API_BASE}/api/ai/alerts`),
+        fetch(`${API_BASE}/api/ai/recommendations`),
+        fetch(`${API_BASE}/api/ai/goals`),
+        fetch(`${API_BASE}/api/ai/customers`),
+      ];
+
+      const [
+        healthRes,
+        insightsRes,
+        alertsRes,
+        recsRes,
+        goalRes,
+        customerRes,
+      ] = await Promise.all(requests);
+
+      if (!healthRes.ok) {
+        throw new Error("Business health API failed");
+      }
+
+      if (!insightsRes.ok) {
+        throw new Error("Monthly insights API failed");
+      }
+
+      if (!alertsRes.ok) {
+        throw new Error("Alerts API failed");
+      }
+
+      if (!recsRes.ok) {
+        throw new Error("Recommendations API failed");
+      }
+
+      if (!goalRes.ok) {
+        throw new Error("Goals API failed");
+      }
+
+      if (!customerRes.ok) {
+        throw new Error("Customers API failed");
+      }
+
+      const [
+        health,
+        insights,
+        alerts,
+        recommendations,
+        goal,
+        customer,
+      ] = await Promise.all([
+        healthRes.json(),
+        insightsRes.json(),
+        alertsRes.json(),
+        recsRes.json(),
+        goalRes.json(),
+        customerRes.json(),
       ]);
 
-      const overviewData = overviewResult.status === "fulfilled" ? overviewResult.value : null;
-      const monthlyData = monthlyResult.status === "fulfilled" ? monthlyResult.value : null;
-      const alertsData = alertsResult.status === "fulfilled" ? alertsResult.value : null;
-      const customersData = customersResult.status === "fulfilled" ? customersResult.value : null;
+      setHealthData(health);
+      setInsightsData(insights);
+      setAlertsData(Array.isArray(alerts) ? alerts : []);
+      setRecsData(Array.isArray(recommendations) ? recommendations : []);
+      setGoalData(goal);
+      setCustomerData(customer);
+    } catch (err) {
+      console.error("AI API Fetch Error:", err);
+      setError(
+        "Failed to load AI insights. Please check the backend connection and try again."
+      );
+    } finally {
+      setHealthLoading(false);
+      setInsightsLoading(false);
+      setAlertsLoading(false);
+      setRecsLoading(false);
+      setGoalLoading(false);
+      setCustomerLoading(false);
+    }
+  }, []);
 
-      if (overviewData?.data) {
-        setSummary(overviewData.data.summaryCard || null);
-        setStats(overviewData.data.stats || null);
-        setRecommendations(overviewData.data.recommendations || []);
-        setSource(overviewData.source || "");
+  useEffect(() => {
+    fetchAllAI();
+  }, [fetchAllAI]);
+
+  // =========================================================
+  // AI CHAT
+  // =========================================================
+  const handleChatSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!chatQuery.trim()) return;
+
+    setChatLoading(true);
+    setChatReply(null);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/ai/assistant/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: chatQuery.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Assistant API failed");
       }
 
-      if (monthlyData?.data) {
-        setMonthly(monthlyData.data);
-      }
+      const data = await res.json();
 
-      if (alertsData?.alerts) {
-        setAlerts(alertsData.alerts);
-      }
-
-      if (customersData?.customers) {
-        setCustomers(customersData.customers);
-        setCustomerSummary(customersData.summary || null);
-      }
-      if ([overviewResult, monthlyResult, alertsResult, customersResult].every((result) => result.status === "rejected")) {
-        throw overviewResult.reason;
+      if (data?.data?.reply) {
+        setChatReply(data.data.reply);
+      } else if (data?.reply) {
+        setChatReply(data.reply);
+      } else {
+        setChatReply(
+          "Sorry, I could not find an answer. Please try again."
+        );
       }
     } catch (err) {
-      console.error("AI data fetch error:", err);
-      setError("The AI service is unavailable. Start the API server or check NEXT_PUBLIC_API_BASE_URL, then try again.");
+      console.error("AI Assistant Error:", err);
+      setChatReply("Something went wrong. Please try again later.");
     } finally {
-      setLoading(false);
+      setChatLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchAllData();
-  }, []);
+  // =========================================================
+  // LOADING STATE
+  // =========================================================
+  const isInitialLoading =
+    healthLoading &&
+    insightsLoading &&
+    alertsLoading &&
+    recsLoading &&
+    goalLoading &&
+    customerLoading;
 
+  if (isInitialLoading) {
   if (loading) {
     return (
       <main className={styles.page}>
-        <div className={styles.container} style={{ textAlign: "center", paddingTop: "120px" }}>
+        <div
+          className={styles.container}
+          style={{
+            textAlign: "center",
+            paddingTop: "120px",
+          }}
+        >
           <div className={styles.aiLabel}>
             <span className={styles.aiDot} />
             HISABDO AI
           </div>
-          <h2 style={{ marginTop: "20px" }}>Loading AI Insights...</h2>
-          <p style={{ color: "#94a3b8" }}>Please wait while we fetch your business intelligence.</p>
+
+          <h2 style={{ marginTop: "20px" }}>
+            Loading AI Insights...
+          </h2>
+
+          <p style={{ color: "#94a3b8" }}>
+            Please wait while we fetch your business intelligence.
+          </p>
         </div>
       </main>
     );
   }
 
+  // =========================================================
+  // ERROR STATE
+  // =========================================================
+  if (error && !healthData && !insightsData) {
   if (error) {
     return (
       <main className={styles.page}>
-        <div className={styles.container} style={{ textAlign: "center", paddingTop: "120px" }}>
-          <h2>Something went wrong</h2>
-          <p style={{ color: "#94a3b8", margin: "16px 0" }}>{error}</p>
-          <button className={styles.primaryButton} onClick={fetchAllData}>
+        <div
+          className={styles.container}
+          style={{
+            textAlign: "center",
+            paddingTop: "120px",
+          }}
+        >
+          <div className={styles.aiLabel}>
+            <span className={styles.aiDot} />
+            HISABDO AI
+          </div>
+
+          <h2 style={{ marginTop: "20px" }}>
+            Something went wrong
+          </h2>
+
+          <p
+            style={{
+              color: "#94a3b8",
+              margin: "16px 0",
+            }}
+          >
+            {error}
+          </p>
+
+          <button
+            className={styles.primaryButton}
+            onClick={fetchAllAI}
+          >
             Try Again
           </button>
         </div>
@@ -107,35 +265,44 @@ export default function AIPage() {
     );
   }
 
+  // =========================================================
+  // MAIN PAGE
+  // =========================================================
   return (
     <main className={styles.page}>
       <div className={styles.backgroundGlow} />
 
       <div className={styles.container}>
-        {/* HEADER */}
+        {/* =====================================================
+            HEADER
+        ====================================================== */}
         <header className={styles.header}>
           <div>
             <div className={styles.aiLabel}>
               <span className={styles.aiDot} />
               HISABDO AI
-              {source && (
-                <span style={{ marginLeft: "12px", fontSize: "10px", color: "#64748b" }}>
-                  ({source === "remote_ai" ? "Live AI" : "Fallback"})
-                </span>
-              )}
             </div>
+
             <h1>Business intelligence, made simple.</h1>
+
             <p>
-              Get smarter insights from your business activity and make
-              better financial decisions with HisabDo AI.
+              Get smarter insights from your business activity and
+              make better financial decisions with HisabDo AI.
             </p>
           </div>
+
+          <button
+            className={styles.refreshButton}
+            onClick={fetchAllAI}
+          >
           <button className={styles.refreshButton} onClick={fetchAllData}>
             ↻ Refresh insights
           </button>
         </header>
 
-        {/* TABS */}
+        {/* =====================================================
+            TABS
+        ====================================================== */}
         <nav className={styles.tabs}>
           {[
             ["overview", "Overview"],
@@ -144,7 +311,9 @@ export default function AIPage() {
           ].map(([key, label]) => (
             <button
               key={key}
-              className={activeTab === key ? styles.activeTab : ""}
+              className={
+                activeTab === key ? styles.activeTab : ""
+              }
               onClick={() => setActiveTab(key)}
             >
               {label}
@@ -152,6 +321,290 @@ export default function AIPage() {
           ))}
         </nav>
 
+        {/* =====================================================
+            OVERVIEW TAB
+        ====================================================== */}
+        {activeTab === "overview" && (
+          <>
+            {/* AI SUMMARY */}
+            <section className={styles.summaryCard}>
+              <div className={styles.summaryIcon}>✦</div>
+
+              <div className={styles.summaryContent}>
+                <span className={styles.eyebrow}>
+                  AI BUSINESS SUMMARY
+                </span>
+
+                <h2>
+                  {healthData?.status
+                    ? `Your business is ${healthData.status.toLowerCase()}.`
+                    : "Your business is performing well this month."}
+                </h2>
+
+                <p>
+                  {healthData?.message ||
+                    "Revenue and customer activity are looking healthy. Review your latest insights to make better financial decisions."}
+                </p>
+
+                <div className={styles.summaryActions}>
+                  <button
+                    className={styles.primaryButton}
+                    onClick={() => setActiveTab("insights")}
+                  >
+                    View recommendations
+                  </button>
+
+                  <button
+                    className={styles.secondaryButton}
+                    onClick={() => setActiveTab("insights")}
+                  >
+                    See monthly insights
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* STATS */}
+            <section className={styles.statsGrid}>
+              {/* Business Health */}
+              <article className={styles.statCard}>
+                <div className={styles.statTop}>
+                  <span>Business Health</span>
+                  <span className={styles.greenIcon}>♥</span>
+                </div>
+
+                {healthLoading ? (
+                  <p style={{ color: "#888" }}>
+                    Loading...
+                  </p>
+                ) : (
+                  <>
+                    <strong>
+                      {healthData?.score ?? 0}
+                      <span>/100</span>
+                    </strong>
+
+                    <div className={styles.progress}>
+                      <div
+                        style={{
+                          width: `${healthData?.score ?? 0}%`,
+                        }}
+                      />
+                    </div>
+
+                    <small>
+                      {healthData?.message ||
+                        "Data unavailable"}
+                    </small>
+                  </>
+                )}
+              </article>
+
+              {/* Monthly Profit */}
+              <article className={styles.statCard}>
+                <div className={styles.statTop}>
+                  <span>Monthly Profit</span>
+                  <span className={styles.greenIcon}>↗</span>
+                </div>
+
+                {insightsLoading ? (
+                  <p style={{ color: "#888" }}>
+                    Loading...
+                  </p>
+                ) : (
+                  <>
+                    <strong>
+                      Rs. {insightsData?.profit ?? "—"}
+                    </strong>
+
+                    <div className={styles.changePositive}>
+                      Positive monthly performance
+                    </div>
+
+                    <small>
+                      Based on your latest records
+                    </small>
+                  </>
+                )}
+              </article>
+
+              {/* Customer Activity */}
+              <article className={styles.statCard}>
+                <div className={styles.statTop}>
+                  <span>Customer Activity</span>
+                  <span className={styles.blueIcon}>●</span>
+                </div>
+
+                {customerLoading ? (
+                  <p style={{ color: "#888" }}>
+                    Loading...
+                  </p>
+                ) : (
+                  <>
+                    <strong>
+                      {customerData?.activityScore ?? "—"}
+                    </strong>
+
+                    <div className={styles.progress}>
+                      <div
+                        style={{
+                          width: `${
+                            parseInt(
+                              customerData?.activityScore,
+                              10
+                            ) || 0
+                          }%`,
+                        }}
+                      />
+                    </div>
+
+                    <small>
+                      Healthy customer activity
+                    </small>
+                  </>
+                )}
+              </article>
+
+              {/* Alerts */}
+              <article className={styles.statCard}>
+                <div className={styles.statTop}>
+                  <span>Smart Alerts</span>
+                  <span className={styles.orangeIcon}>!</span>
+                </div>
+
+                {alertsLoading ? (
+                  <p style={{ color: "#888" }}>
+                    Loading...
+                  </p>
+                ) : (
+                  <>
+                    <strong>{alertsData.length}</strong>
+
+                    <div className={styles.changeWarning}>
+                      Items need attention
+                    </div>
+
+                    <small>
+                      Review your latest business alerts
+                    </small>
+                  </>
+                )}
+              </article>
+            </section>
+
+            {/* MAIN GRID */}
+            <section className={styles.mainGrid}>
+              {/* RECOMMENDATIONS */}
+              <article className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <span className={styles.eyebrow}>
+                      PERSONALIZED
+                    </span>
+
+                    <h3>AI Recommendations</h3>
+                  </div>
+
+                  <span className={styles.sparkle}>✦</span>
+                </div>
+
+                <div className={styles.recommendationList}>
+                  {recsLoading ? (
+                    <p
+                      style={{
+                        color: "#888",
+                        padding: "10px",
+                      }}
+                    >
+                      Loading recommendations...
+                    </p>
+                  ) : recsData.length > 0 ? (
+                    recsData.map((item, index) => (
+                      <div
+                        className={styles.recommendation}
+                        key={item.title || index}
+                      >
+                        <div className={styles.itemIcon}>
+                          {item.icon || "💡"}
+                        </div>
+
+                        <div className={styles.itemContent}>
+                          <h4>
+                            {item.title ||
+                              "Business recommendation"}
+                          </h4>
+
+                          <p>
+                            {item.text ||
+                              "Review this recommendation for better business performance."}
+                          </p>
+
+                          <button>
+                            {item.action || "View insight"} →
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p
+                      style={{
+                        color: "#888",
+                        padding: "10px",
+                      }}
+                    >
+                      No recommendations available.
+                    </p>
+                  )}
+                </div>
+              </article>
+
+              {/* ALERTS */}
+              <article className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <span className={styles.eyebrow}>
+                      ATTENTION
+                    </span>
+
+                    <h3>Smart Alerts</h3>
+                  </div>
+
+                  <span className={styles.alertCount}>
+                    {alertsData.length}
+                  </span>
+                </div>
+
+                <div className={styles.alertList}>
+                  {alertsLoading ? (
+                    <p
+                      style={{
+                        color: "#888",
+                        padding: "10px",
+                      }}
+                    >
+                      Loading alerts...
+                    </p>
+                  ) : alertsData.length > 0 ? (
+                    alertsData.map((alert, index) => (
+                      <div
+                        className={`${styles.alert} ${
+                          styles[alert.type] || ""
+                        }`}
+                        key={alert.title || index}
+                      >
+                        <div className={styles.alertIcon}>
+                          {alert.icon || "🔔"}
+                        </div>
+
+                        <div>
+                          <h4>
+                            {alert.title || "Business alert"}
+                          </h4>
+
+                          <p>
+                            {alert.text ||
+                              "Review this alert for more information."}
+                          </p>
         {/* OVERVIEW / INSIGHTS TABS */}
         {(activeTab === "overview" || activeTab === "insights") && (
           <>
@@ -286,6 +739,37 @@ export default function AIPage() {
                       </div>
                     ))
                   ) : (
+                    <p
+                      style={{
+                        color: "#888",
+                        padding: "10px",
+                      }}
+                    >
+                      No alerts at the moment.
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  className={styles.fullButton}
+                  onClick={() => setActiveTab("insights")}
+                >
+                  View all alerts →
+                </button>
+              </article>
+            </section>
+
+            {/* SECOND ROW */}
+            <section className={styles.mainGrid}>
+              {/* GOALS */}
+              <article className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <span className={styles.eyebrow}>
+                      FINANCIAL PLANNING
+                    </span>
+
+                    <h3>Your Financial Goal</h3>
                     <p style={{ color: "#94a3b8" }}>No alerts at the moment.</p>
                   )}
                 </div>
@@ -305,23 +789,282 @@ export default function AIPage() {
                       <h3>{monthly.title || "Business Overview"}</h3>
                     </div>
                   </div>
-                  <p style={{ color: "#94a3b8", marginBottom: "20px" }}>
-                    {monthly.overview}
+
+                  <span className={styles.goalIcon}>
+                    🎯
+                  </span>
+                </div>
+
+                {goalLoading ? (
+                  <p
+                    style={{
+                      color: "#888",
+                      padding: "10px",
+                    }}
+                  >
+                    Loading goal...
                   </p>
-                  <div className={styles.monthlyStats}>
-                    <div>
-                      <span>Income</span>
-                      <strong>{monthly.metrics?.income?.display || "—"}</strong>
+                ) : (
+                  <>
+                    <div className={styles.goalHeader}>
+                      <div>
+                        <h4>
+                          {goalData?.title || "Financial Goal"}
+                        </h4>
+
+                        <p>
+                          Rs. {goalData?.saved ?? "—"} saved of
+                          Rs. {goalData?.target ?? "—"}
+                        </p>
+                      </div>
+
+                      <strong>
+                        {goalData?.percentage ?? 0}%
+                      </strong>
                     </div>
-                    <div>
-                      <span>Expenses</span>
-                      <strong>{monthly.metrics?.expenses?.display || "—"}</strong>
+
+                    <div className={styles.goalProgress}>
+                      <div
+                        style={{
+                          width: `${
+                            goalData?.percentage ?? 0
+                          }%`,
+                        }}
+                      />
                     </div>
-                    <div>
-                      <span>Profit</span>
-                      <strong>{monthly.metrics?.profit?.display || "—"}</strong>
+
+                    <div className={styles.goalFooter}>
+                      <span>
+                        Rs. {goalData?.remaining ?? "—"}{" "}
+                        remaining
+                      </span>
+
+                      <span>
+                        {goalData?.status || "On track"}
+                      </span>
                     </div>
+                  </>
+                )}
+
+                <button className={styles.fullButton}>
+                  View action plan →
+                </button>
+              </article>
+
+              {/* CUSTOMERS */}
+              <article className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <span className={styles.eyebrow}>
+                      CUSTOMER INTELLIGENCE
+                    </span>
+
+                    <h3>Customer Insights</h3>
                   </div>
+
+                  <span className={styles.customerIcon}>
+                    👥
+                  </span>
+                </div>
+
+                {customerLoading ? (
+                  <p
+                    style={{
+                      color: "#888",
+                      padding: "10px",
+                    }}
+                  >
+                    Loading customers...
+                  </p>
+                ) : (
+                  <>
+                    <div className={styles.customerSummary}>
+                      <div>
+                        <strong>
+                          {customerData?.followUpCount ?? 0}
+                        </strong>
+
+                        <span>Need follow-up</span>
+                      </div>
+
+                      <div>
+                        <strong>
+                          {customerData?.activeCount ?? 0}
+                        </strong>
+
+                        <span>Active customers</span>
+                      </div>
+
+                      <div>
+                        <strong>
+                          {customerData?.activityScore ?? "—"}
+                        </strong>
+
+                        <span>Activity score</span>
+                      </div>
+                    </div>
+
+                    {customerData?.list?.length > 0 ? (
+                      customerData.list
+                        .slice(0, 3)
+                        .map((cust) => (
+                          <div
+                            className={styles.customerRow}
+                            key={cust.id}
+                          >
+                            <div className={styles.avatar}>
+                              {cust.initials || "CU"}
+                            </div>
+
+                            <div>
+                              <h4>
+                                {cust.name ||
+                                  "Customer"}
+                              </h4>
+
+                              <p>
+                                {cust.desc ||
+                                  "Customer activity available"}
+                              </p>
+                            </div>
+
+                            <span
+                              className={
+                                cust.badge === "High"
+                                  ? styles.highBadge
+                                  : styles.mediumBadge
+                              }
+                            >
+                              {cust.badge || "Low"}
+                            </span>
+                          </div>
+                        ))
+                    ) : (
+                      <p
+                        style={{
+                          color: "#888",
+                          padding: "10px",
+                        }}
+                      >
+                        No customer insights available.
+                      </p>
+                    )}
+                  </>
+                )}
+
+                <button
+                  className={styles.fullButton}
+                  onClick={() => setActiveTab("customers")}
+                >
+                  View customer insights →
+                </button>
+              </article>
+            </section>
+          </>
+        )}
+
+        {/* =====================================================
+            INSIGHTS TAB
+        ====================================================== */}
+        {activeTab === "insights" && (
+          <section className={styles.card}>
+            <div className={styles.cardHeader}>
+              <div>
+                <span className={styles.eyebrow}>
+                  MONTHLY INSIGHTS
+                </span>
+
+                <h3>
+                  {insightsData?.month || "Current Month"}{" "}
+                  Business Overview
+                </h3>
+              </div>
+            </div>
+
+            {insightsLoading ? (
+              <p
+                style={{
+                  padding: "20px",
+                  color: "#888",
+                }}
+              >
+                Fetching AI Monthly Insights...
+              </p>
+            ) : (
+              <>
+                <p
+                  style={{
+                    color: "#94a3b8",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {insightsData?.summary ||
+                    "Your latest financial activity shows a positive trend."}
+                </p>
+
+                <div className={styles.monthlyStats}>
+                  <div>
+                    <span>Income</span>
+                    <strong>
+                      Rs. {insightsData?.income ?? "—"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Expenses</span>
+                    <strong>
+                      Rs. {insightsData?.expenses ?? "—"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Profit</span>
+                    <strong>
+                      Rs. {insightsData?.profit ?? "—"}
+                    </strong>
+                  </div>
+                </div>
+              </>
+            )}
+          </section>
+        )}
+
+        {/* =====================================================
+            CUSTOMERS TAB
+        ====================================================== */}
+        {activeTab === "customers" && (
+          <section className={styles.card}>
+            <div className={styles.cardHeader}>
+              <div>
+                <span className={styles.eyebrow}>
+                  CUSTOMER INTELLIGENCE
+                </span>
+
+                <h3>Customer Insights</h3>
+              </div>
+
+              <span className={styles.customerIcon}>
+                👥
+              </span>
+            </div>
+
+            {customerLoading ? (
+              <p
+                style={{
+                  color: "#888",
+                  padding: "10px",
+                }}
+              >
+                Loading customers...
+              </p>
+            ) : (
+              <>
+                <div className={styles.customerSummary}>
+                  <div>
+                    <strong>
+                      {customerData?.followUpCount ?? 0}
+                    </strong>
+
                 </article>
               </section>
             )}
@@ -346,11 +1089,253 @@ export default function AIPage() {
                     <strong>{customerSummary.needFollowUp ?? 0}</strong>
                     <span>Need follow-up</span>
                   </div>
-                  <div>
+
+                  <div>                    <strong>
+                      {customerData?.activeCount ?? 0}
+                    </strong>
+
                     <strong>{customerSummary.activeCustomers ?? 0}</strong>
                     <span>Active customers</span>
                   </div>
+
                   <div>
+                    <strong>
+                      {customerData?.activityScore ?? "—"}
+                    </strong>
+
+                    <span>Activity score</span>
+                  </div>
+                </div>
+
+                {customerData?.list?.length > 0 ? (
+                  customerData.list.map((cust) => (
+                    <div
+                      className={styles.customerRow}
+                      key={cust.id}
+                    >
+                      <div className={styles.avatar}>
+                        {cust.initials || "CU"}
+                      </div>
+
+                      <div>
+                        <h4>
+                          {cust.name || "Customer"}
+                        </h4>
+
+                        <p>
+                          {cust.desc ||
+                            "Customer activity available"}
+                        </p>
+                      </div>
+
+                      <span
+                        className={
+                          cust.badge === "High"
+                            ? styles.highBadge
+                            : styles.mediumBadge
+                        }
+                      >
+                        {cust.badge || "Low"}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p
+                    style={{
+                      color: "#888",
+                      padding: "10px",
+                    }}
+                  >
+                    No customer insights available.
+                  </p>
+                )}
+              </>
+            )}
+          </section>
+        )}
+
+        {/* =====================================================
+            AI ASSISTANT TAB
+        ====================================================== */}
+        {activeTab === "chat" && (
+          <section
+            className={styles.card}
+            style={{
+              maxWidth: "700px",
+              margin: "0 auto",
+            }}
+          >
+            <div className={styles.cardHeader}>
+              <div>
+                <span className={styles.eyebrow}>
+                  AI ASSISTANT
+                </span>
+
+                <h3>Ask HisabDo AI</h3>
+              </div>
+
+              <span className={styles.customerIcon}>
+                ✦
+              </span>
+            </div>
+
+            <p
+              style={{
+                color: "#94a3b8",
+                marginBottom: "20px",
+              }}
+            >
+              Ask questions about your business and financial
+              activity.
+            </p>
+
+            <form onSubmit={handleChatSubmit}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  flexWrap: "wrap",
+                }}
+              >
+                <input
+                  type="text"
+                  value={chatQuery}
+                  onChange={(e) =>
+                    setChatQuery(e.target.value)
+                  }
+                  placeholder="Ask something about your business..."
+                  style={{
+                    flex: 1,
+                    minWidth: "220px",
+                    padding: "12px 14px",
+                    borderRadius: "10px",
+                    border: "1px solid rgba(148, 163, 184, 0.25)",
+                    background: "rgba(15, 23, 42, 0.5)",
+                    color: "inherit",
+                    outline: "none",
+                  }}
+                  disabled={chatLoading}
+                />
+
+                <button
+                  type="submit"
+                  className={styles.primaryButton}
+                  disabled={chatLoading}
+                >
+                  {chatLoading
+                    ? "Thinking..."
+                    : "Ask AI"}
+                </button>
+              </div>
+            </form>
+
+            {chatReply && (
+              <div
+                style={{
+                  marginTop: "20px",
+                  padding: "16px",
+                  borderRadius: "12px",
+                  background: "rgba(148, 163, 184, 0.08)",
+                }}
+              >
+                <span className={styles.eyebrow}>
+                  AI RESPONSE
+                </span>
+
+                <p
+                  style={{
+                    marginTop: "8px",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {chatReply}
+                </p>
+              </div>
+            )}
+
+            <button
+              className={styles.fullButton}
+              style={{ marginTop: "20px" }}
+              onClick={() => setActiveTab("customers")}
+            >
+              View customer insights →
+            </button>
+          </section>
+        )}
+
+        {/* =====================================================
+            MONTHLY INSIGHTS SUMMARY
+        ====================================================== */}
+        {activeTab === "overview" && (
+          <section className={styles.monthlyCard}>
+            {insightsLoading ? (
+              <p
+                style={{
+                  padding: "20px",
+                  color: "#888",
+                }}
+              >
+                Fetching AI Monthly Insights...
+              </p>
+            ) : (
+              <>
+                <div>
+                  <span className={styles.eyebrow}>
+                    MONTHLY INSIGHTS
+                  </span>
+
+                  <h3>
+                    {insightsData?.month ||
+                      "Current Month"}{" "}
+                    Business Overview
+                  </h3>
+
+                  <p>
+                    {insightsData?.summary ||
+                      "Your latest financial activity shows a positive trend."}
+                  </p>
+                </div>
+
+                <div className={styles.monthlyStats}>
+                  <div>
+                    <span>Income</span>
+
+                    <strong>
+                      Rs. {insightsData?.income ?? "—"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Expenses</span>
+
+                    <strong>
+                      Rs. {insightsData?.expenses ?? "—"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Profit</span>
+
+                    <strong>
+                      Rs. {insightsData?.profit ?? "—"}
+                    </strong>
+                  </div>
+                </div>
+
+                <button
+                  className={styles.primaryButton}
+                  onClick={() => setActiveTab("insights")}
+                >
+                  View full report →
+                </button>
+              </>
+            )}
+          </section>
+        )}
+
+        {/* =====================================================
+            FOOTER NOTE
+        ====================================================== */}
                     <strong>{customerSummary.activityScore ?? 0}%</strong>
                     <span>Activity score</span>
                   </div>
@@ -385,8 +1370,10 @@ export default function AIPage() {
 
         <div className={styles.disclaimer}>
           <span>✦</span>
-          HisabDo AI provides business insights to support your decisions.
-          Always review important financial decisions before taking action.
+
+          HisabDo AI provides business insights to support your
+          decisions. Always review important financial decisions
+          before taking action.
         </div>
       </div>
     </main>
